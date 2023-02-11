@@ -1,5 +1,5 @@
-short_name = "godot"
-name = "Godot Engine"
+short_name = "ramatak"
+name = "Ramatak Mobile Studion - Powered by Godot engine"
 major = 3
 minor = 5
 patch = 1

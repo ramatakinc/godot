@@ -485,7 +485,7 @@ Error OS_X11::initialize(const VideoMode &p_desired, int p_video_driver, int p_a
 	XISelectEvents(x11_display, DefaultRootWindow(x11_display), &xi.all_master_event_mask, 1);
 
 	/* set the titlebar name */
-	XStoreName(x11_display, x11_window, "Godot");
+	XStoreName(x11_display, x11_window, "Ramatak Mobile Studio");
 
 	wm_delete = XInternAtom(x11_display, "WM_DELETE_WINDOW", true);
 	XSetWMProtocols(x11_display, x11_window, &wm_delete, 1);
@@ -4023,10 +4023,10 @@ void OS_X11::set_context(int p_context) {
 		CharString name_str;
 		switch (p_context) {
 			case CONTEXT_EDITOR:
-				name_str = "Godot_Editor";
+				name_str = "Ramatak_Editor";
 				break;
 			case CONTEXT_PROJECTMAN:
-				name_str = "Godot_ProjectList";
+				name_str = "Ramatak_ProjectList";
 				break;
 			case CONTEXT_ENGINE:
 				name_str = "Godot_Engine";
@@ -4042,7 +4042,7 @@ void OS_X11::set_context(int p_context) {
 				class_str = config_name.utf8();
 			}
 		} else {
-			class_str = "Godot";
+			class_str = "Ramatak Mobile Studio";
 		}
 
 		classHint->res_class = class_str.ptrw();
