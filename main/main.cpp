@@ -1530,7 +1530,8 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	EditorNode::register_editor_types();
 
 	ClassDB::set_current_api(ClassDB::API_CORE);
-
+	String JAVA_HOME = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("jdk/");
+	OS::get_singleton()->set_environment("JAVA_HOME", JAVA_HOME);
 #endif
 
 	MAIN_PRINT("Main: Load Modules, Physics, Drivers, Scripts");

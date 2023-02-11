@@ -33,9 +33,11 @@
 #include "export_plugin.h"
 
 void register_android_exporter() {
+#if 0
 	EDITOR_DEF("export/android/android_sdk_path", "");
 	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::STRING, "export/android/android_sdk_path", PROPERTY_HINT_GLOBAL_DIR));
-	EDITOR_DEF("export/android/debug_keystore", "");
+#endif
+	EDITOR_DEF("export/android/debug_keystore", EditorSettings::get_singleton()->get_data_dir().plus_file("debug.keystore"));
 	EditorSettings::get_singleton()->add_property_hint(PropertyInfo(Variant::STRING, "export/android/debug_keystore", PROPERTY_HINT_GLOBAL_FILE, "*.keystore,*.jks"));
 	EDITOR_DEF("export/android/debug_keystore_user", "androiddebugkey");
 	EDITOR_DEF("export/android/debug_keystore_pass", "android");

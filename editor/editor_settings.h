@@ -97,6 +97,7 @@ private:
 
 	String resource_path;
 	String settings_dir;
+	String exe_path;
 	String data_dir;
 	String cache_dir;
 	String config_file_path;
@@ -159,6 +160,7 @@ public:
 	void set_resource_clipboard(const Ref<Resource> &p_resource) { clipboard = p_resource; }
 	Ref<Resource> get_resource_clipboard() const { return clipboard; }
 
+	String get_exe_path() const;
 	String get_data_dir() const;
 	String get_templates_dir() const;
 	String get_settings_dir() const;

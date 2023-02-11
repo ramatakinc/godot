@@ -972,6 +972,7 @@ void EditorSettings::create() {
 		singleton->config_file_path = config_file_path;
 		singleton->project_config_dir = project_config_dir;
 		singleton->settings_dir = config_dir;
+		singleton->exe_path = exe_path;
 		singleton->data_dir = data_dir;
 		singleton->cache_dir = cache_dir;
 
@@ -1191,12 +1192,16 @@ void EditorSettings::add_property_hint(const PropertyInfo &p_hint) {
 
 // Data directories
 
+String EditorSettings::get_exe_path() const {
+	return exe_path;
+}
+
 String EditorSettings::get_data_dir() const {
 	return data_dir;
 }
 
 String EditorSettings::get_templates_dir() const {
-	return get_data_dir().plus_file("templates");
+	return get_exe_path().plus_file("templates");
 }
 
 // Config directories
