@@ -31,6 +31,10 @@
 #include "main/main.h"
 #include "os_windows.h"
 
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+#include "thirdparty/winsparkle/include/winsparkle.h"
+#endif
+
 #include <locale.h>
 #include <stdio.h>
 
@@ -147,6 +151,11 @@ char *wc_to_utf8(const wchar_t *wc) {
 }
 
 __declspec(dllexport) int widechar_main(int argc, wchar_t **argv) {
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+	win_sparkle_set_registry_path("Software\\Ramatak Inc.\\Ramatak Mobile Studio\\Updates");
+	win_sparkle_set_automatic_check_for_updates(true);
+#endif
+
 	OS_Windows os(NULL);
 
 	setlocale(LC_CTYPE, "");
@@ -180,6 +189,9 @@ __declspec(dllexport) int widechar_main(int argc, wchar_t **argv) {
 	}
 	delete[] argv_utf8;
 
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+	win_sparkle_cleanup();
+#endif
 	return os.get_exit_code();
 };
 

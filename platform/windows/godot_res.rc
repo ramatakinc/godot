@@ -6,6 +6,9 @@
 
 GODOT_ICON ICON platform/windows/godot.ico
 
+FeedURL     APPCAST     {"https://ramatak.com/appcast/windows.xml"}
+DSAPub      DSAPEM      "dsa_pub.pem"
+
 1 VERSIONINFO
 FILEVERSION    	VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,0
 PRODUCTVERSION 	VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,0

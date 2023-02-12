@@ -180,6 +180,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+#include "thirdparty/winsparkle/include/winsparkle.h"
+#endif
+
 EditorNode *EditorNode::singleton = nullptr;
 
 // The metadata key used to store and retrieve the version text to copy to the clipboard.
@@ -2901,6 +2905,11 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 		case HELP_DOCS: {
 			OS::get_singleton()->shell_open(VERSION_DOCS_URL "/");
 		} break;
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+		case HELP_UPDATES: {
+			win_sparkle_check_update_with_ui();
+		} break;
+#endif
 		case HELP_QA: {
 			OS::get_singleton()->shell_open("https://godotengine.org/qa/");
 		} break;
@@ -6588,6 +6597,9 @@ EditorNode::EditorNode() {
 #endif
 	p->add_separator();
 	p->add_icon_shortcut(gui_base->get_icon("ExternalLink", "EditorIcons"), ED_SHORTCUT("editor/online_docs", TTR("Online Documentation")), HELP_DOCS);
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+	p->add_icon_shortcut(gui_base->get_icon("ExternalLink", "EditorIcons"), ED_SHORTCUT("editor/updates", "Check for updates"), HELP_UPDATES);
+#endif
 #if 0
 	p->add_icon_shortcut(gui_base->get_icon("ExternalLink", "EditorIcons"), ED_SHORTCUT("editor/q&a", TTR("Questions & Answers")), HELP_QA);
 	p->add_icon_shortcut(gui_base->get_icon("ExternalLink", "EditorIcons"), ED_SHORTCUT("editor/report_a_bug", TTR("Report a Bug")), HELP_REPORT_A_BUG);

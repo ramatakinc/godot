@@ -443,6 +443,9 @@ def configure_mingw(env):
     # resrc
     env.Append(BUILDERS={"RES": env.Builder(action=build_res_file, suffix=".o", src_suffix=".rc")})
 
+    if env["tools"]:
+        env.Append(LINKFLAGS=["-Lthirdparty/winsparkle/x64/Release/"])
+        env.Append(LIBS=[":WinSparkle.lib"])
 
 def configure(env):
     # At this point the env has been set up with basic tools/compilers.

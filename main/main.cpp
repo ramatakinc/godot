@@ -86,6 +86,10 @@
 #endif
 #endif
 
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+#include "thirdparty/winsparkle/include/winsparkle.h"
+#endif
+
 /* Static members */
 
 // Singletons
@@ -1583,6 +1587,11 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	print_verbose("EDITOR API HASH: " + uitos(ClassDB::get_api_hash(ClassDB::API_EDITOR)));
 	MAIN_PRINT("Main: Done");
 
+#if defined(WINDOWS_ENABLED) && defined(TOOLS_ENABLED)
+	if (editor || project_manager) {
+		win_sparkle_init();
+	}
+#endif
 	return OK;
 }
 
