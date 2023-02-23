@@ -69,7 +69,7 @@
 
 #include "editor/audio_stream_preview.h"
 #include "editor/dependency_editor.h"
-#include "editor/editor_about.h"
+#include "editor/editor_about_ramatak.h"
 #include "editor/editor_audio_buses.h"
 #include "editor/editor_export.h"
 #include "editor/editor_feature_profile.h"
@@ -625,6 +625,7 @@ void EditorNode::_notification(int p_what) {
 			PopupMenu *p = help_menu->get_popup();
 			p->set_item_icon(p->get_item_index(HELP_SEARCH), gui_base->get_icon("HelpSearch", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_DOCS), gui_base->get_icon("ExternalLink", "EditorIcons"));
+#if 0
 			p->set_item_icon(p->get_item_index(HELP_QA), gui_base->get_icon("ExternalLink", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_REPORT_A_BUG), gui_base->get_icon("ExternalLink", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_SUGGEST_A_FEATURE), gui_base->get_icon("ExternalLink", "EditorIcons"));
@@ -632,6 +633,8 @@ void EditorNode::_notification(int p_what) {
 			p->set_item_icon(p->get_item_index(HELP_COMMUNITY), gui_base->get_icon("ExternalLink", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_ABOUT), gui_base->get_icon("Godot", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_SUPPORT_GODOT_DEVELOPMENT), gui_base->get_icon("Heart", "EditorIcons"));
+#endif
+			p->set_item_icon(p->get_item_index(HELP_ABOUT), gui_base->get_icon("Issue", "EditorIcons"));
 			_update_update_spinner();
 		} break;
 
@@ -2926,7 +2929,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			OS::get_singleton()->shell_open("https://godotengine.org/community");
 		} break;
 		case HELP_ABOUT: {
-			about->popup_centered_minsize(Size2(780, 500) * EDSCALE);
+			about->popup_centered();
 		} break;
 		case HELP_SUPPORT_GODOT_DEVELOPMENT: {
 			OS::get_singleton()->shell_open("https://godotengine.org/donate");
@@ -6361,7 +6364,7 @@ EditorNode::EditorNode() {
 
 	feature_profile_manager = memnew(EditorFeatureProfileManager);
 	gui_base->add_child(feature_profile_manager);
-	about = memnew(EditorAbout);
+	about = memnew(EditorAboutRamatak);
 	gui_base->add_child(about);
 	feature_profile_manager->connect("current_feature_profile_changed", this, "_feature_profile_changed");
 
@@ -6610,6 +6613,7 @@ EditorNode::EditorNode() {
 	p->add_icon_shortcut(gui_base->get_icon("Godot", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About Godot")), HELP_ABOUT);
 	p->add_icon_shortcut(gui_base->get_icon("Heart", "EditorIcons"), ED_SHORTCUT("editor/support_development", TTR("Support Godot Development")), HELP_SUPPORT_GODOT_DEVELOPMENT);
 #endif
+	p->add_icon_shortcut(gui_base->get_icon("Issue", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About Ramatak Mobile Studio")), HELP_ABOUT);
 
 	HBoxContainer *play_hb = memnew(HBoxContainer);
 	menu_hb->add_child(play_hb);

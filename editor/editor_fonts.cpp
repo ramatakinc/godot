@@ -283,4 +283,8 @@ void editor_register_fonts(Ref<Theme> p_theme) {
 
 	MAKE_SOURCE_FONT(df_text_editor_status_code, default_font_size);
 	p_theme->set_font("status_source", "EditorFonts", df_text_editor_status_code);
+
+	MAKE_DEFAULT_FONT(df_about, default_font_size * 1.2);
+	p_theme->set_font("about", "EditorFonts", df_about);
+	df_about->set_outline_size(1);
 }
