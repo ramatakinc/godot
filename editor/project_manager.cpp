@@ -2242,7 +2242,7 @@ void ProjectManager::_erase_missing_projects() {
 }
 
 void ProjectManager::_show_about() {
-	about->popup_centered(Size2(780, 500) * EDSCALE);
+	about->popup_centered();
 }
 
 void ProjectManager::_language_selected(int p_id) {
@@ -2784,7 +2784,7 @@ ProjectManager::ProjectManager() {
 		add_child(open_templates);
 	}
 
-	about = memnew(EditorAbout);
+	about = memnew(EditorAboutRamatak);
 	add_child(about);
 }
 

@@ -52,7 +52,7 @@ class ConfirmationDialog;
 class Control;
 class DependencyEditor;
 class DependencyErrorDialog;
-class EditorAbout;
+class EditorAboutRamatak;
 class EditorExport;
 class EditorFeatureProfileManager;
 class EditorFileServer;
@@ -321,7 +321,7 @@ private:
 	Button *select_current_scene_button;
 	AcceptDialog *accept;
 	AcceptDialog *save_accept;
-	EditorAbout *about;
+	EditorAboutRamatak *about;
 	AcceptDialog *warning;
 
 	int overridden_default_layout;
