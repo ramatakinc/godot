@@ -580,6 +580,9 @@ void EditorNode::_notification(int p_what) {
 			settings_menu->add_style_override("hover", gui_base->get_stylebox("MenuHover", "EditorStyles"));
 			help_menu->add_style_override("hover", gui_base->get_stylebox("MenuHover", "EditorStyles"));
 
+			tabbar_panel->add_style_override("panel", gui_base->get_stylebox("tabbar_background", "TabContainer"));
+			launch_pad->add_style_override("panel", gui_base->get_stylebox("LaunchPad", "EditorStyles"));
+
 			if (EDITOR_GET("interface/scene_tabs/resize_if_many_tabs")) {
 				scene_tabs->set_min_width(int(EDITOR_GET("interface/scene_tabs/minimum_width")) * EDSCALE);
 			} else {

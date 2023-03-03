@@ -47,6 +47,9 @@ static const String META_TEXT_TO_COPY = "text_to_copy";
 void EditorAboutRamatak::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
+			int dialog_margin = get_constant("margin", "Dialogs");
+			_panel_style->set_expand_margin_size_individual(dialog_margin, 0, dialog_margin, 0);
+
 			_logo_ramatak->set_texture(get_icon("FaceAbout", "EditorIcons"));
 			Ref<Font> font = get_font("source", "EditorFonts");
 			_tpl_text->add_font_override("normal_font", font);
@@ -134,18 +137,17 @@ EditorAboutRamatak::EditorAboutRamatak() {
 	_panel->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 	add_child(_panel);
 
-	StyleBoxTexture *panel_style = memnew(StyleBoxTexture);
-	panel_style->set_default_margin(MARGIN_TOP, 8 * EDSCALE);
-	panel_style->set_default_margin(MARGIN_BOTTOM, 8 * EDSCALE);
-	panel_style->set_expand_margin_size_individual(10 * EDSCALE, 0, 10 * EDSCALE, 0);
-	_panel->add_style_override("panel", panel_style);
+	_panel_style = memnew(StyleBoxTexture);
+	_panel_style->set_default_margin(MARGIN_TOP, 8 * EDSCALE);
+	_panel_style->set_default_margin(MARGIN_BOTTOM, 8 * EDSCALE);
+	_panel->add_style_override("panel", _panel_style);
 
 	GradientTexture *grad_tex = memnew(GradientTexture);
 	_gradient = memnew(Gradient);
 	_gradient->set_color(1, Color(0, 0, 0, 0));
 	_gradient->add_point(0.8, Color(0, 0, 0, 0));
 	grad_tex->set_gradient(_gradient);
-	panel_style->set_texture(grad_tex);
+	_panel_style->set_texture(grad_tex);
 
 	VBoxContainer *vbc = memnew(VBoxContainer);
 	_panel->add_child(vbc);
