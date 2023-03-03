@@ -68,6 +68,7 @@ private:
 	TextureRect *_title;
 	Label *_version_text;
 	Label *_about_text;
+	StyleBoxTexture *_panel_style;
 	Gradient *_gradient;
 
 protected:
