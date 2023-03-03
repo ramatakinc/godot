@@ -2036,6 +2036,7 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 
 	//translations
 	TabContainer *translations = memnew(TabContainer);
+	translations->set_theme_type_variation("tab_container_odd");
 	translations->set_tab_align(TabContainer::ALIGN_LEFT);
 	translations->set_name(TTR("Localization"));
 	tab_container->add_child(translations);

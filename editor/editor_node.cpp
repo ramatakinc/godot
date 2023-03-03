@@ -486,6 +486,9 @@ void EditorNode::_notification(int p_what) {
 			get_tree()->connect("files_dropped", this, "_dropped_files");
 			get_tree()->connect("global_menu_action", this, "_global_menu_action");
 
+			tabbar_panel->add_style_override("panel", gui_base->get_stylebox("tabbar_background", "TabContainer"));
+			launch_pad->add_style_override("panel", gui_base->get_stylebox("LaunchPad", "EditorStyles"));
+
 			/* DO NOT LOAD SCENES HERE, WAIT FOR FILE SCANNING AND REIMPORT TO COMPLETE */
 		} break;
 
@@ -6264,7 +6267,10 @@ EditorNode::EditorNode() {
 	scene_tabs->connect("reposition_active_tab_request", this, "_reposition_active_tab");
 	scene_tabs->connect("resized", this, "_update_scene_tabs");
 
+	tabbar_panel = memnew(PanelContainer);
+	srt->add_child(tabbar_panel);
 	tabbar_container = memnew(HBoxContainer);
+	tabbar_panel->add_child(tabbar_container);
 	scene_tabs->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 
 	scene_tabs_context_menu = memnew(PopupMenu);
@@ -6272,7 +6278,6 @@ EditorNode::EditorNode() {
 	scene_tabs_context_menu->connect("id_pressed", this, "_menu_option");
 	scene_tabs_context_menu->set_hide_on_window_lose_focus(true);
 
-	srt->add_child(tabbar_container);
 	tabbar_container->add_child(scene_tabs);
 	distraction_free = memnew(ToolButton);
 #ifdef OSX_ENABLED
@@ -6615,8 +6620,11 @@ EditorNode::EditorNode() {
 #endif
 	p->add_icon_shortcut(gui_base->get_icon("Issue", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About Ramatak Mobile Studio")), HELP_ABOUT);
 
+	launch_pad = memnew(PanelContainer);
+	menu_hb->add_child(launch_pad);
+
 	HBoxContainer *play_hb = memnew(HBoxContainer);
-	menu_hb->add_child(play_hb);
+	launch_pad->add_child(play_hb);
 
 	play_button = memnew(ToolButton);
 	play_hb->add_child(play_button);

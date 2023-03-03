@@ -267,6 +267,7 @@ void TabContainer::_notification(int p_what) {
 			}
 
 			Vector<Control *> tabs = _get_tabs();
+			Ref<StyleBox> tabbar_style = get_stylebox("tabbar_background");
 			Ref<StyleBox> tab_bg = get_stylebox("tab_bg");
 			Ref<StyleBox> tab_fg = get_stylebox("tab_fg");
 			Ref<StyleBox> tab_disabled = get_stylebox("tab_disabled");
@@ -346,6 +347,9 @@ void TabContainer::_notification(int p_what) {
 					tabs_ofs_cache = header_x + header_width - all_tabs_width;
 					break;
 			}
+
+			// Draw background for the tabbar.
+			tabbar_style->draw(canvas, Rect2(0, 0, size.width, header_height));
 
 			if (all_tabs_in_front) {
 				// Draw the tab area.

@@ -283,6 +283,7 @@ private:
 	MenuButton *settings_menu;
 	MenuButton *help_menu;
 	PopupMenu *tool_menu;
+	PanelContainer *launch_pad;
 	ToolButton *export_button;
 	ToolButton *prev_scene;
 	ToolButton *play_button;
@@ -383,6 +384,7 @@ private:
 	Timer *dock_drag_timer;
 	bool docks_visible;
 
+	PanelContainer *tabbar_panel;
 	HBoxContainer *tabbar_container;
 	ToolButton *distraction_free;
 	ToolButton *scene_tab_add;
