@@ -101,6 +101,7 @@ void VisualServerRaster::draw(bool p_swap_buffers, double frame_step) {
 	changes[0] = 0;
 	changes[1] = 0;
 
+	TIMESTAMP_FRAME_START();
 	VSG::rasterizer->begin_frame(frame_step);
 
 	VSG::scene->update_dirty_instances(); //update scene stuff
@@ -109,6 +110,7 @@ void VisualServerRaster::draw(bool p_swap_buffers, double frame_step) {
 	VSG::scene->render_probes();
 	_draw_margins();
 	VSG::rasterizer->end_frame(p_swap_buffers);
+	TIMESTAMP_END();
 
 	while (frame_drawn_callbacks.front()) {
 		Object *obj = ObjectDB::get_instance(frame_drawn_callbacks.front()->get().object);

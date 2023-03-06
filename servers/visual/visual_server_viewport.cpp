@@ -273,6 +273,8 @@ void VisualServerViewport::draw_viewports() {
 
 	//draw viewports
 	for (int i = 0; i < active_viewports.size(); i++) {
+		SECTION_START(vformat("VIEWPORT #%d", i));
+
 		Viewport *vp = active_viewports[i];
 
 		if (vp->update_mode == VS::VIEWPORT_UPDATE_DISABLED) {
@@ -362,6 +364,7 @@ void VisualServerViewport::draw_viewports() {
 			vp->update_mode = VS::VIEWPORT_UPDATE_DISABLED;
 		}
 		VSG::scene_render->set_debug_draw_mode(VS::VIEWPORT_DEBUG_DRAW_DISABLED);
+		SECTION_END();
 	}
 }
 

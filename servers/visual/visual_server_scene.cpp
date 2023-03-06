@@ -3133,6 +3133,9 @@ void VisualServerScene::_prepare_scene(const Transform p_cam_transform, const Ca
 
 	// directional lights
 	{
+		SECTION_START("DIRECTIONAL SHADOWS");
+		TIMESTAMP("directional_shadows");
+
 		Instance **lights_with_shadow = (Instance **)alloca(sizeof(Instance *) * scenario->directional_lights.size());
 		int directional_shadow_count = 0;
 
@@ -3161,14 +3164,22 @@ void VisualServerScene::_prepare_scene(const Transform p_cam_transform, const Ca
 		VSG::scene_render->set_directional_shadow_count(directional_shadow_count);
 
 		for (int i = 0; i < directional_shadow_count; i++) {
+			SECTION_START(vformat("Directional Light #%d", i + 1));
 			_light_instance_update_shadow(lights_with_shadow[i], p_cam_transform, p_cam_projection, p_cam_orthogonal, p_shadow_atlas, scenario);
+			SECTION_END();
 		}
+
+		SECTION_END();
 	}
 
 	{ //setup shadow maps
+		SECTION_START("NON-DIRECTIONAL SHADOWS");
+		TIMESTAMP("non_directional_shadows");
 
 		//SortArray<Instance*,_InstanceLightsort> sorter;
 		//sorter.sort(light_cull_result,light_cull_count);
+		int count_omni = 1;
+		int count_spot = 1;
 		for (int i = 0; i < light_cull_count; i++) {
 			Instance *ins = light_cull_result[i];
 
@@ -3191,6 +3202,9 @@ void VisualServerScene::_prepare_scene(const Transform p_cam_transform, const Ca
 
 				switch (VSG::storage->light_get_type(ins->base)) {
 					case VS::LIGHT_OMNI: {
+						SECTION_START(vformat("Omni Light #%d", count_omni));
+						count_omni++;
+
 						float radius = VSG::storage->light_get_param(ins->base, VS::LIGHT_PARAM_RANGE);
 
 						//get two points parallel to near plane
@@ -3214,6 +3228,9 @@ void VisualServerScene::_prepare_scene(const Transform p_cam_transform, const Ca
 						coverage = screen_diameter / (vp_half_extents.x + vp_half_extents.y);
 					} break;
 					case VS::LIGHT_SPOT: {
+						SECTION_START(vformat("Spot Light #%d", count_spot));
+						count_spot++;
+
 						float radius = VSG::storage->light_get_param(ins->base, VS::LIGHT_PARAM_RANGE);
 						float angle = VSG::storage->light_get_param(ins->base, VS::LIGHT_PARAM_SPOT_ANGLE);
 
@@ -3244,6 +3261,7 @@ void VisualServerScene::_prepare_scene(const Transform p_cam_transform, const Ca
 					} break;
 					default: {
 						ERR_PRINT("Invalid Light Type");
+						SECTION_START("Invalid Light Type");
 					}
 				}
 			}
@@ -3259,7 +3277,9 @@ void VisualServerScene::_prepare_scene(const Transform p_cam_transform, const Ca
 				//must redraw!
 				light->shadow_dirty = _light_instance_update_shadow(ins, p_cam_transform, p_cam_projection, p_cam_orthogonal, p_shadow_atlas, scenario);
 			}
+			VSG::rasterizer->pop_label();
 		}
+		SECTION_END();
 	}
 
 	// Calculate instance->depth from the camera, after shadow calculation has stopped overwriting instance->depth

@@ -3542,13 +3542,19 @@ void RasterizerSceneGLES2::render_scene(const Transform &p_cam_transform, const 
 	}
 
 	// render opaque things first
+	SECTION_START("OPAQUE");
+	TIMESTAMP("opaque");
 	render_list.sort_by_key(false);
 	_render_render_list(render_list.elements, render_list.element_count, cam_transform, p_cam_projection, p_eye, p_shadow_atlas, env, env_radiance_tex, 0.0, 0.0, reverse_cull, false, false);
+	SECTION_END();
 
 	// then draw the sky after
 	if (env && env->bg_mode == VS::ENV_BG_SKY && (!storage->frame.current_rt || !storage->frame.current_rt->flags[RasterizerStorage::RENDER_TARGET_TRANSPARENT])) {
 		if (sky && sky->panorama.is_valid()) {
+			SECTION_START("SKY");
+			TIMESTAMP("sky");
 			_draw_sky(sky, p_cam_projection, cam_transform, false, env->sky_custom_fov, env->bg_energy, env->sky_orientation);
+			SECTION_END();
 		}
 	}
 
@@ -3596,7 +3602,10 @@ void RasterizerSceneGLES2::render_scene(const Transform &p_cam_transform, const 
 
 	render_list.sort_by_reverse_depth_and_priority(true);
 
+	SECTION_START("ALPHA");
+	TIMESTAMP("alpha");
 	_render_render_list(&render_list.elements[render_list.max_elements - render_list.alpha_element_count], render_list.alpha_element_count, cam_transform, p_cam_projection, p_eye, p_shadow_atlas, env, env_radiance_tex, 0.0, 0.0, reverse_cull, true, false);
+	SECTION_END();
 
 	if (p_reflection_probe.is_valid()) {
 		// Rendering to a probe so no need for post_processing
@@ -3604,8 +3613,11 @@ void RasterizerSceneGLES2::render_scene(const Transform &p_cam_transform, const 
 	}
 
 	//post process
+	SECTION_START("POST PROCESS");
+	TIMESTAMP("post_process");
 	_post_process(env, p_cam_projection);
-
+	SECTION_END();
+	TIMESTAMP_END();
 	//#define GLES2_SHADOW_ATLAS_DEBUG_VIEW
 
 #ifdef GLES2_SHADOW_ATLAS_DEBUG_VIEW
