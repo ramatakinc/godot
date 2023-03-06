@@ -74,7 +74,6 @@ void Rasterizer::enable_frame_timings() {
 			gen_queries_func(MAX_QUERIES, frame_timings[i].queries);
 			frame_timings[i].query_names.resize(MAX_QUERIES);
 			frame_timings[i].query_results.resize(MAX_QUERIES);
-			frame_timings[i].result_names.resize(MAX_QUERIES);
 		}
 		frame_timing_enabled = true;
 	}
@@ -91,7 +90,7 @@ void Rasterizer::begin_frame_timings() {
 
 		uint64_t prev_time = 0;
 		uint64_t cur_time = 0;
-		for (int i = 0; i < frame_timings[frame].query_count; i++) {
+		for (uint32_t i = 0; i < frame_timings[frame].query_count; i++) {
 			//get_query_func(frame_timings[frame].queries[i], GL_QUERY_RESULT, &frame_timings[frame].query_results[i]);
 			get_query_func(frame_timings[frame].queries[i], GL_QUERY_RESULT, &cur_time);
 			//frame_timings[frame].query_results[i] = result;
@@ -101,7 +100,6 @@ void Rasterizer::begin_frame_timings() {
 			}
 
 			prev_time = cur_time;
-			frame_timings[frame].result_names[i] = frame_timings[frame].query_names[i];
 		}
 
 		//Send the data to the profiler
@@ -110,23 +108,25 @@ void Rasterizer::begin_frame_timings() {
 			Array values;
 
 			// sum results based on name (since parts of the render pipeline may run more than once due to viewports)
-			for (int i = 0; i < frame_timings[frame].query_count - 1; i++) {
-				String name = frame_timings[frame].result_names[i];
+			for (uint32_t i = 0; i < frame_timings[frame].query_count - 1; i++) {
+				String name = frame_timings[frame].query_names[i];
 				if (name == "END_TIMESTAMP")
 					continue;
 
 				uint64_t time = frame_timings[frame].query_results[i];
 
 				if (time != 0) {
-					for (int j = i + 1; j < frame_timings[frame].query_count - 1; j++) {
-						if (frame_timings[frame].result_names[j] == name) {
+					for (uint32_t j = i + 1; j < frame_timings[frame].query_count - 1; j++) {
+						if (frame_timings[frame].query_names[j] == name) {
 							time += frame_timings[frame].query_results[j];
 							frame_timings[frame].query_results[j] = 0;
 						}
 					}
 					float time_ms = USEC_TO_SEC(time / 1000);
-					values.push_back(name);
-					values.push_back(time_ms);
+					if (time_ms < 200) {
+						values.push_back(name);
+						values.push_back(time_ms);
+					}
 				}
 			}
 

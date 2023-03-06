@@ -44,10 +44,13 @@
 #define TIMESTAMP_FRAME_START() VSG::rasterizer->begin_frame_timings()
 #define TIMESTAMP(X) VSG::rasterizer->timestamp(X)
 #define TIMESTAMP_END() VSG::rasterizer->timestamp("END_TIMESTAMP") // necessary to calculate the time of the previous timestamp
-#elif
+#else
+#define SECTION_START(X)
+#define SECTION_END()
+
 #define TIMESTAMP_FRAME_START()
-#define TIMESTAMP()
-#define TIMESTAMP_FRAME_END()
+#define TIMESTAMP(X)
+#define TIMESTAMP_END()
 #endif
 
 class RasterizerScene {
@@ -1289,7 +1292,6 @@ protected:
 		uint32_t query_count;
 		LocalVector<uint64_t> query_results;
 		LocalVector<String> query_names;
-		LocalVector<String> result_names;
 	};
 	FrameTimings frame_timings[FRAME_TIMING_COUNT];
 	int frame = 0;

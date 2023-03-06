@@ -273,8 +273,6 @@ void VisualServerViewport::draw_viewports() {
 
 	//draw viewports
 	for (int i = 0; i < active_viewports.size(); i++) {
-		SECTION_START(vformat("VIEWPORT #%d", i));
-
 		Viewport *vp = active_viewports[i];
 
 		if (vp->update_mode == VS::VIEWPORT_UPDATE_DISABLED) {
@@ -300,6 +298,7 @@ void VisualServerViewport::draw_viewports() {
 		if (!visible) {
 			continue;
 		}
+		SECTION_START(vformat("VIEWPORT #%d", i));
 
 		VSG::storage->render_target_clear_used(vp->render_target);
 
