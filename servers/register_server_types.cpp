@@ -68,6 +68,7 @@
 #include "physics_server_2d_wrap_mt.h"
 #include "physics_server_3d.h"
 #include "physics_server_3d_wrap_mt.h"
+#include "ramatak/ad_server.h"
 #include "rendering/renderer_compositor.h"
 #include "rendering/rendering_device.h"
 #include "rendering/rendering_device_binds.h"
@@ -132,6 +133,7 @@ void register_server_types() {
 	GDREGISTER_ABSTRACT_CLASS(DisplayServer);
 	GDREGISTER_ABSTRACT_CLASS(RenderingServer);
 	GDREGISTER_CLASS(AudioServer);
+	GDREGISTER_CLASS(AdServer);
 
 	GDREGISTER_CLASS(PhysicsServer2DManager);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer2DManager", PhysicsServer2DManager::get_singleton(), "PhysicsServer2DManager"));
@@ -296,6 +298,7 @@ void unregister_server_types() {
 }
 
 void register_server_singletons() {
+	Engine::get_singleton()->add_singleton(Engine::Singleton("AdServer", AdServer::get_singleton(), "AdServer"));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("DisplayServer", DisplayServer::get_singleton(), "DisplayServer"));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("RenderingServer", RenderingServer::get_singleton(), "RenderingServer"));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("AudioServer", AudioServer::get_singleton(), "AudioServer"));

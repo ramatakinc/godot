@@ -75,6 +75,7 @@
 #include "servers/navigation_server_3d_dummy.h"
 #include "servers/physics_server_2d.h"
 #include "servers/physics_server_3d.h"
+#include "servers/ramatak/ad_server.h"
 #include "servers/register_server_types.h"
 #include "servers/rendering/rendering_server_default.h"
 #include "servers/text/text_server_dummy.h"
@@ -128,6 +129,7 @@ static FileAccessNetworkClient *file_access_network_client = nullptr;
 static MessageQueue *message_queue = nullptr;
 
 // Initialized in setup2()
+static AdServer *ad_server = nullptr;
 static AudioServer *audio_server = nullptr;
 static DisplayServer *display_server = nullptr;
 static RenderingServer *rendering_server = nullptr;
@@ -483,6 +485,8 @@ Error Main::test_setup() {
 	translation_server = memnew(TranslationServer);
 	tsman = memnew(TextServerManager);
 
+	ad_server = memnew(AdServer);
+
 	if (tsman) {
 		Ref<TextServerDummy> ts;
 		ts.instantiate();
@@ -698,6 +702,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	performance = memnew(Performance);
 	GDREGISTER_CLASS(Performance);
 	engine->add_singleton(Engine::Singleton("Performance", performance));
+
+	ad_server = memnew(AdServer);
 
 	// Only flush stdout in debug builds by default, as spamming `print()` will
 	// decrease performance if this is enabled.
