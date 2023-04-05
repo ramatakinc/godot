@@ -17,7 +17,7 @@ class AdController : public Node {
 
 	Status status;
 
-	StringName ad_unit;
+	String ad_unit;
 
 protected:
 	static void
@@ -28,8 +28,8 @@ public:
 	void set_network(String p_network_alias);
 	String get_network() const;
 
-	void set_ad_unit(StringName p_ad_unit);
-	StringName get_ad_unit() const;
+	void set_ad_unit(String p_ad_unit);
+	String get_ad_unit() const;
 
 	void show();
 	void hide();

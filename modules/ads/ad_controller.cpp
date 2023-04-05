@@ -12,7 +12,7 @@ void AdController::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show"), &AdController::show);
 	ClassDB::bind_method(D_METHOD("hide"), &AdController::hide);
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "ad_unit"), "set_ad_unit", "get_ad_unit");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "ad_unit", PropertyHint::PROPERTY_HINT_AD_UNIT), "set_ad_unit", "get_ad_unit");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "network"), "set_network", "get_network");
 
 	ADD_SIGNAL(MethodInfo("shown"));
@@ -34,11 +34,11 @@ String AdController::get_network() const {
 	return this->network_alias;
 }
 
-void AdController::set_ad_unit(StringName p_ad_unit) {
+void AdController::set_ad_unit(String p_ad_unit) {
 	ad_unit = p_ad_unit;
 }
 
-StringName AdController::get_ad_unit() const {
+String AdController::get_ad_unit() const {
 	return ad_unit;
 }
 

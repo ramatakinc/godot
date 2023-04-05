@@ -43,6 +43,7 @@
 #include "editor/plugins/script_editor_plugin.h"
 #include "editor/project_settings_editor.h"
 #include "editor/property_selector.h"
+#include "editor/ramatak/editor_property_ad_unit.h"
 #include "editor/scene_tree_editor.h"
 #include "scene/2d/gpu_particles_2d.h"
 #include "scene/3d/fog_volume.h"
@@ -4488,6 +4489,10 @@ EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_
 				EditorPropertyTextEnum *editor = memnew(EditorPropertyTextEnum);
 				Vector<String> options = p_hint_text.split(",", false);
 				editor->setup(options, true, (p_hint == PROPERTY_HINT_ENUM_SUGGESTION));
+				return editor;
+			} else if (p_hint == PROPERTY_HINT_AD_UNIT) {
+				EditorPropertyAdUnit *editor = memnew(EditorPropertyAdUnit);
+				editor->setup();
 				return editor;
 			} else {
 				EditorPropertyText *editor = memnew(EditorPropertyText);
