@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BannerAdController" inherits="AdController" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="auto_show" type="bool" setter="set_auto_show" getter="get_auto_show" default="false">
+		</member>
+		<member name="location" type="int" setter="set_location" getter="get_location" enum="BannerAdController.BannerAdLocation" default="0">
+		</member>
+		<member name="size" type="int" setter="set_size" getter="get_size" enum="BannerAdController.BannerAdSize" default="0">
+		</member>
+	</members>
+	<constants>
+		<constant name="BannerAdSize::SMALL" value="0" enum="BannerAdSize">
+		</constant>
+		<constant name="BannerAdSize::LARGE" value="1" enum="BannerAdSize">
+		</constant>
+		<constant name="BannerAdLocation::BOTTOM" value="0" enum="BannerAdLocation">
+		</constant>
+		<constant name="BannerAdLocation::TOP" value="1" enum="BannerAdLocation">
+		</constant>
+	</constants>
+</class>

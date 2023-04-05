@@ -78,6 +78,7 @@
 #include "core/object/worker_thread_pool.h"
 #include "core/os/main_loop.h"
 #include "core/os/time.h"
+#include "core/ramatak/monetization_settings.h"
 #include "core/string/optimized_translation.h"
 #include "core/string/translation.h"
 
@@ -311,6 +312,8 @@ void register_core_settings() {
 	} else {
 		worker_thread_pool->init(worker_threads, low_priority_use_system_threads, low_property_ratio);
 	}
+	GLOBAL_DEF(PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_units"), Dictionary());
+	GLOBAL_DEF(PropertyInfo(Variant::ARRAY, "ramatak/monetization/ad_plugin_priorities"), Array());
 }
 
 void register_core_singletons() {
@@ -349,6 +352,7 @@ void register_core_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("GDExtensionManager", GDExtensionManager::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("ResourceUID", ResourceUID::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("WorkerThreadPool", worker_thread_pool));
+	Engine::get_singleton()->add_singleton(Engine::Singleton("MonetizationSettings", MonetizationSettings::get_singleton()));
 }
 
 void register_core_extensions() {
