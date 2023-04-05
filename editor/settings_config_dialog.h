@@ -31,6 +31,7 @@
 #ifndef SETTINGS_CONFIG_DIALOG_H
 #define SETTINGS_CONFIG_DIALOG_H
 
+#include "editor/editor_sdk_manager.h"
 #include "editor/editor_sectioned_inspector.h"
 #include "editor_inspector.h"
 #include "scene/gui/dialogs.h"
@@ -48,6 +49,7 @@ class EditorSettingsDialog : public AcceptDialog {
 	TabContainer *tabs;
 	Control *tab_general;
 	Control *tab_shortcuts;
+	EditorSDKManager *tab_sdk_manager;
 
 	LineEdit *search_box;
 	LineEdit *shortcut_search_box;

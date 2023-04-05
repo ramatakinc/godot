@@ -364,6 +364,8 @@ void EditorSettingsDialog::_focus_current_search_box() {
 		current_search_box = search_box;
 	} else if (tab == tab_shortcuts) {
 		current_search_box = shortcut_search_box;
+	} else if (tab == tab_sdk_manager) {
+		current_search_box = tab_sdk_manager->get_search_box();
 	}
 
 	if (current_search_box) {
@@ -506,6 +508,11 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	add_child(timer);
 	EditorSettings::get_singleton()->connect("settings_changed", this, "_settings_changed");
 	get_ok()->set_text(TTR("Close"));
+
+	// SDK Manager Tab
+
+	tab_sdk_manager = memnew(EditorSDKManager);
+	tabs->add_child(tab_sdk_manager);
 
 	updating = false;
 }
