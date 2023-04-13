@@ -39,6 +39,7 @@
 #include "editor/editor_sectioned_inspector.h"
 #include "editor/import_defaults_editor.h"
 #include "editor/localization_editor.h"
+#include "editor/ramatak/ramatak_settings_editor.h"
 #include "editor/shader_globals_editor.h"
 #include "scene/gui/tab_container.h"
 
@@ -54,6 +55,7 @@ class ProjectSettingsEditor : public AcceptDialog {
 	TabContainer *tab_container = nullptr;
 	VBoxContainer *general_editor = nullptr;
 	SectionedInspector *general_settings_inspector = nullptr;
+	RamatakSettingsEditor *ramatak_settings_editor = nullptr;
 	ActionMapEditor *action_map_editor = nullptr;
 	LocalizationEditor *localization_editor = nullptr;
 	EditorAutoloadSettings *autoload_settings = nullptr;

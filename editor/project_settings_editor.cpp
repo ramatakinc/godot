@@ -706,6 +706,10 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	plugin_settings->set_name(TTR("Plugins"));
 	tab_container->add_child(plugin_settings);
 
+	ramatak_settings_editor = memnew(RamatakSettingsEditor);
+	ramatak_settings_editor->set_name(TTR("Ramatak"));
+	tab_container->add_child(ramatak_settings_editor);
+
 	timer = memnew(Timer);
 	timer->set_wait_time(1.5);
 	timer->connect("timeout", callable_mp(ps, &ProjectSettings::save));
