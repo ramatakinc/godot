@@ -71,6 +71,7 @@
 #include "servers/physics_server.h"
 #include "servers/register_server_types.h"
 #include "servers/visual_server_callbacks.h"
+#include "servers/ramatak/ad_server.h"
 
 #ifdef TOOLS_ENABLED
 #include "editor/doc/doc_data.h"
@@ -110,6 +111,7 @@ static ScriptDebugger *script_debugger = nullptr;
 static MessageQueue *message_queue = nullptr;
 
 // Initialized in setup2()
+static AdServer *ad_server = nullptr;
 static AudioServer *audio_server = nullptr;
 static CameraServer *camera_server = nullptr;
 static ARVRServer *arvr_server = nullptr;
@@ -419,6 +421,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 			String("Please include this when reporting the bug to the project developer."));
 	GLOBAL_DEF("debug/settings/crash_handler/message.editor",
 			String("Please include this when reporting the bug on: https://github.com/godotengine/godot/issues"));
+	ad_server = memnew(AdServer);
 
 	MAIN_PRINT("Main: Parse CMDLine");
 

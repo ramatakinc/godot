@@ -29,6 +29,7 @@
 /*************************************************************************/
 
 #include "gradle_export_util.h"
+#include "servers/ramatak/ad_server.h"
 
 int _get_android_orientation_value(OS::ScreenOrientation screen_orientation) {
 	switch (screen_orientation) {
@@ -293,6 +294,17 @@ String _get_application_tag(const Ref<EditorExportPreset> &p_preset, bool p_has_
 	} else {
 		manifest_application_text += "        <meta-data tools:node=\"remove\" android:name=\"com.oculus.supportedDevices\" />\n";
 	}
+
+	Array priorities = AdServer::get_singleton()->get_plugin_priority_order();
+	Dictionary admob_config = AdServer::get_singleton()->get_plugin_config("ADMOB");
+	if (priorities.has("ADMOB") && admob_config.has("application_id")) {
+		// Update the meta-data 'android:name' attribute based on whether Admob is required.
+		String admob_app_id = admob_config["application_id"];
+		manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id + "\" />\n";
+	} else if (priorities.has("ADMOB")) {
+		WARN_PRINT("Missing Admob application_id config setting. Exported game will crash on startup.");
+	}
+
 	manifest_application_text += _get_activity_tag(p_preset);
 	manifest_application_text += "    </application>\n";
 	return manifest_application_text;

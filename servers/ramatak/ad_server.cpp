@@ -1,0 +1,126 @@
+#include "ad_server.h"
+
+#include "core/project_settings.h"
+#include "core/ramatak/monetization_settings.h"
+
+AdServer *AdServer::singleton = nullptr;
+
+void AdServer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_available_plugins"), &AdServer::get_available_plugins);
+
+	ClassDB::bind_method(D_METHOD("set_plugin_priority_order", "priorities"), &AdServer::set_plugin_priority_order);
+	ClassDB::bind_method(D_METHOD("get_plugin_priority_order"), &AdServer::get_plugin_priority_order);
+
+	BIND_ENUM_CONSTANT(AdType::AD_TYPE_BANNER);
+	BIND_ENUM_CONSTANT(AdType::AD_TYPE_INTERSTITIAL);
+	BIND_ENUM_CONSTANT(AdType::AD_TYPE_REWARDED);
+
+	BIND_ENUM_CONSTANT(BannerAdSize::BANNER_SIZE_SMALL);
+	BIND_ENUM_CONSTANT(BannerAdSize::BANNER_SIZE_LARGE);
+
+	BIND_ENUM_CONSTANT(BannerAdLocation::BANNER_LOCATION_BOTTOM);
+	BIND_ENUM_CONSTANT(BannerAdLocation::BANNER_LOCATION_TOP);
+}
+
+void AdServer::register_ad_plugin(String p_name, Ref<AdPlugin> p_plugin) {
+	p_plugin->init_plugin();
+	if (!this->ad_plugins.has(p_name)) {
+		this->ad_plugin_list.push_back(p_name);
+	}
+	this->ad_plugins[p_name] = p_plugin;
+}
+
+AdServer *AdServer::get_singleton() {
+	return AdServer::singleton;
+}
+
+Array AdServer::get_available_plugins() const {
+	return this->ad_plugin_list;
+}
+
+Array AdServer::get_plugin_priority_order() const {
+	return ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
+}
+
+void AdServer::set_plugin_priority_order(Array p_priorites) {
+	ProjectSettings::get_singleton()->set("ramatak/monetization/ad_plugin_priorities", p_priorites);
+}
+
+Dictionary AdServer::get_plugin_config(String p_plugin) const {
+	Dictionary all_configs = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_config");
+	return all_configs[p_plugin];
+}
+
+Variant AdServer::show_other(String p_ad_unit) {
+	Array ad_plugin_priorities = (Array)ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
+	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
+		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
+		if (network_specific_id.length() > 0) {
+			// Plugin `i` can handle the specified ad_unit.
+			Variant request_token = rand.rand();
+			ad_plugins[ad_plugin_priorities[i]]->show_other(network_specific_id, request_token);
+			return request_token;
+		}
+	}
+	WARN_PRINT_ONCE("No ad plugin is capable of handling ad unit.");
+	// There might be a better return value here.
+	return "";
+}
+
+Variant AdServer::show_banner(String p_ad_unit, BannerAdSize p_size, BannerAdLocation p_location) {
+	Dictionary extra_data;
+	// This looks gross, and it is, but these values are going to cross an FFI boundary into a plugin and
+	// it's much less error-prone to pass a string than an integer, especially because these plugins might
+	// not even be first-party.
+	String size;
+	if (p_size == BannerAdSize::BANNER_SIZE_SMALL) {
+		size = "small";
+	} else if (p_size == BannerAdSize::BANNER_SIZE_LARGE) {
+		size = "large";
+	} else {
+		ERR_FAIL_V_MSG(Variant(), "Ad size not handled");
+	}
+	String location;
+	if (p_location == BannerAdLocation::BANNER_LOCATION_BOTTOM) {
+		location = "bottom";
+	} else if (p_location == BannerAdLocation::BANNER_LOCATION_TOP) {
+		location = "top";
+	} else {
+		ERR_FAIL_V_MSG(Variant(), "Ad location not handled");
+	}
+	Array ad_plugin_priorities = (Array)ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
+	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
+		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
+		if (network_specific_id.length() > 0) {
+			// Plugin `i` can handle the specified ad_unit.
+			Variant request_token = rand.rand();
+			ad_plugins[ad_plugin_priorities[i]]->show_banner(network_specific_id, request_token, size, location);
+			return request_token;
+		}
+	}
+	WARN_PRINT_ONCE("No ad plugin is capable of handling ad unit.");
+	return Variant();
+}
+
+Variant AdServer::hide(String p_ad_unit) {
+	Array ad_plugin_priorities = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
+	Variant request_token = rand.rand();
+	// For now just send a hide request to every ad plugin that can handle this ad unit.
+	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
+		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
+		if (network_specific_id.length() > 0) {
+			// Plugin `i` can handle the specified ad_unit.
+			ad_plugins[ad_plugin_priorities[i]]->hide(network_specific_id, request_token);
+		}
+	}
+	return request_token;
+}
+
+AdServer::AdServer() :
+		ad_request_counter(0) {
+	AdServer::singleton = this;
+}
+
+AdServer::~AdServer() {
+	AdServer::singleton = nullptr;
+}

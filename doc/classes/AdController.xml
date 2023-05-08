@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AdController" inherits="Node" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="hide">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+		<method name="show">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="ad_unit" type="String" setter="set_ad_unit" getter="get_ad_unit" default="&quot;&quot;">
+		</member>
+	</members>
+	<signals>
+		<signal name="clicked">
+			<description>
+			</description>
+		</signal>
+		<signal name="closed">
+			<description>
+			</description>
+		</signal>
+		<signal name="error">
+			<description>
+			</description>
+		</signal>
+		<signal name="finished">
+			<description>
+			</description>
+		</signal>
+		<signal name="hidden">
+			<description>
+			</description>
+		</signal>
+		<signal name="shown">
+			<description>
+			</description>
+		</signal>
+	</signals>
+	<constants>
+	</constants>
+</class>

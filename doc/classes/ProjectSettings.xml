@@ -1403,6 +1403,12 @@
 			[b]Note:[/b] Jitter fix is automatically disabled at runtime when [member physics/common/physics_interpolation] is enabled.
 			[b]Note:[/b] This property is only read when the project starts. To change the value at runtime, set [member Engine.physics_jitter_fix] instead.
 		</member>
+		<member name="ramatak/monetization/ad_plugin_config" type="Dictionary" setter="" getter="" default="{}">
+		</member>
+		<member name="ramatak/monetization/ad_plugin_priorities" type="Array" setter="" getter="" default="{}">
+		</member>
+		<member name="ramatak/monetization/ad_units" type="Dictionary" setter="" getter="" default="{}">
+		</member>
 		<member name="rendering/2d/opengl/batching_send_null" type="int" setter="" getter="" default="0">
 			[b]Experimental.[/b] Calls [code]glBufferData[/code] with NULL data prior to uploading batching data. This may not be necessary but can be used for safety.
 			[b]Note:[/b] Use with care. You are advised to leave this as default for exports. A non-default setting that works better on your machine may adversely affect performance for end users.

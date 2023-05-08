@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AdServer" inherits="Object" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_available_plugins" qualifiers="const">
+			<return type="Array" />
+			<description>
+			</description>
+		</method>
+		<method name="get_plugin_priority_order" qualifiers="const">
+			<return type="Array" />
+			<description>
+			</description>
+		</method>
+		<method name="set_plugin_priority_order">
+			<return type="void" />
+			<argument index="0" name="priorities" type="Array" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<constants>
+		<constant name="AdType::AD_TYPE_BANNER" value="0" enum="AdType">
+		</constant>
+		<constant name="AdType::AD_TYPE_INTERSTITIAL" value="1" enum="AdType">
+		</constant>
+		<constant name="AdType::AD_TYPE_REWARDED" value="2" enum="AdType">
+		</constant>
+		<constant name="BannerAdSize::BANNER_SIZE_SMALL" value="0" enum="BannerAdSize">
+		</constant>
+		<constant name="BannerAdSize::BANNER_SIZE_LARGE" value="1" enum="BannerAdSize">
+		</constant>
+		<constant name="BannerAdLocation::BANNER_LOCATION_BOTTOM" value="0" enum="BannerAdLocation">
+		</constant>
+		<constant name="BannerAdLocation::BANNER_LOCATION_TOP" value="1" enum="BannerAdLocation">
+		</constant>
+	</constants>
+</class>

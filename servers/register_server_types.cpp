@@ -67,6 +67,7 @@
 #include "scene/debugger/script_debugger_remote.h"
 #include "visual/shader_types.h"
 #include "visual_server.h"
+#include "servers/ramatak/ad_server.h"
 
 static void _debugger_get_resource_usage(List<ScriptDebuggerRemote::ResourceUsage> *r_usage) {
 	List<VS::TextureInfo> tinfo;
@@ -118,6 +119,8 @@ void register_server_types() {
 	ClassDB::register_virtual_class<Navigation2DServer>();
 	ClassDB::register_class<ARVRServer>();
 	ClassDB::register_class<CameraServer>();
+
+	ClassDB::register_class<AdServer>();
 
 	shader_types = memnew(ShaderTypes);
 
@@ -209,6 +212,7 @@ void unregister_server_types() {
 }
 
 void register_server_singletons() {
+	Engine::get_singleton()->add_singleton(Engine::Singleton("AdServer", AdServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("VisualServer", VisualServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("AudioServer", AudioServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer", PhysicsServer::get_singleton()));

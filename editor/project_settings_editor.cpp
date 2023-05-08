@@ -2160,6 +2160,10 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	import_defaults_editor->set_name(TTR("Import Defaults"));
 	tab_container->add_child(import_defaults_editor);
 
+	ramatak_settings_editor = memnew(RamatakSettingsEditor);
+	ramatak_settings_editor->set_name(TTR("Ramatak"));
+	tab_container->add_child(ramatak_settings_editor);
+
 	timer = memnew(Timer);
 	timer->set_wait_time(1.5);
 	timer->connect("timeout", ProjectSettings::get_singleton(), "save");

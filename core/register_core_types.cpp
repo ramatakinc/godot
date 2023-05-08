@@ -72,6 +72,7 @@
 #include "core/project_settings.h"
 #include "core/translation.h"
 #include "core/undo_redo.h"
+#include "core/ramatak/monetization_settings.h"
 
 static Ref<ResourceFormatSaverBinary> resource_saver_binary;
 static Ref<ResourceFormatLoaderBinary> resource_loader_binary;
@@ -236,6 +237,13 @@ void register_core_settings() {
 
 	GLOBAL_DEF("network/ssl/certificates", "");
 	ProjectSettings::get_singleton()->set_custom_property_info("network/ssl/certificates", PropertyInfo(Variant::STRING, "network/ssl/certificates", PROPERTY_HINT_FILE, "*.crt"));
+
+	GLOBAL_DEF("ramatak/monetization/ad_plugin_config", Dictionary());
+	ProjectSettings::get_singleton()->set_custom_property_info("ramatak/monetization/ad_plugin_config", PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_config"));
+	GLOBAL_DEF("ramatak/monetization/ad_units", Dictionary());
+	ProjectSettings::get_singleton()->set_custom_property_info("ramatak/monetization/ad_units", PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_units"));
+	GLOBAL_DEF("ramatak/monetization/ad_plugin_priorities", Dictionary());
+	ProjectSettings::get_singleton()->set_custom_property_info("ramatak/monetization/ad_plugin_priorities", PropertyInfo(Variant::ARRAY, "ramatak/monetization/ad_plugin_priorities"));
 }
 
 void register_core_singletons() {
@@ -269,6 +277,7 @@ void register_core_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("InputMap", InputMap::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("JSON", _JSON::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Time", Time::get_singleton()));
+	Engine::get_singleton()->add_singleton(Engine::Singleton("MonetizationSettings", MonetizationSettings::get_singleton()));
 }
 
 void unregister_core_types() {
