@@ -234,6 +234,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 	export_path->update_property();
 	runnable->set_disabled(false);
 	runnable->set_pressed(current->is_runnable());
+	open_key_manager->set_visible(current->get_platform()->get_os_name() == "Android");
 	parameters->edit(current.ptr());
 
 	export_filter->select(current->get_export_filter());
@@ -968,6 +969,8 @@ void ProjectExportDialog::_bind_methods() {
 	ClassDB::bind_method("_force_update_current_preset_parameters", &ProjectExportDialog::_force_update_current_preset_parameters);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "export_path"), "set_export_path", "get_export_path");
+
+	ADD_SIGNAL(MethodInfo("key_manager_requested"));
 }
 
 ProjectExportDialog::ProjectExportDialog() {
@@ -1032,6 +1035,12 @@ ProjectExportDialog::ProjectExportDialog() {
 	export_path->set_object_and_property(this, "export_path");
 	export_path->set_save_mode();
 	export_path->connect("property_changed", this, "_export_path_changed");
+
+	open_key_manager = memnew(Button);
+	settings_vb->add_child(open_key_manager);
+	open_key_manager->set_text(TTR("Open Key Manager"));
+	open_key_manager->hide();
+	open_key_manager->connect("pressed", this, "emit_signal", varray("key_manager_requested"));
 
 	// Subsections.
 

@@ -68,6 +68,7 @@ private:
 
 	LineEdit *name;
 	EditorPropertyPath *export_path;
+	Button *open_key_manager;
 	EditorInspector *parameters;
 	CheckButton *runnable;
 

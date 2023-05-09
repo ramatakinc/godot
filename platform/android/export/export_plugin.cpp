@@ -228,6 +228,9 @@ static const char *AAB_ASSETS_DIRECTORY = "res://android/build/assetPacks/instal
 static const int DEFAULT_MIN_SDK_VERSION = 19; // Should match the value in 'platform/android/java/app/config.gradle#minSdk'
 static const int DEFAULT_TARGET_SDK_VERSION = 32; // Should match the value in 'platform/android/java/app/config.gradle#targetSdk'
 
+static const int KEY_FROM_MANAGER = 0;
+static const int KEY_FROM_MANUAL = 1;
+
 #ifndef ANDROID_ENABLED
 void EditorExportPlatformAndroid::_check_for_changes_poll_thread(void *ud) {
 	EditorExportPlatformAndroid *ea = (EditorExportPlatformAndroid *)ud;
@@ -1714,9 +1717,11 @@ void EditorExportPlatformAndroid::get_export_options(List<ExportOption> *r_optio
 		r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, vformat("%s/%s", PNAME("architectures"), abi)), is_default));
 	}
 
+	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "keystore/debug_key", PROPERTY_HINT_ENUM, "From Key Manager,Manual"), KEY_FROM_MANAGER));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/debug", PROPERTY_HINT_GLOBAL_FILE, "*.keystore,*.jks"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/debug_user"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/debug_password"), ""));
+	r_options->push_back(ExportOption(PropertyInfo(Variant::INT, "keystore/release_key", PROPERTY_HINT_ENUM, "From Key Manager,Manual"), KEY_FROM_MANAGER));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/release", PROPERTY_HINT_GLOBAL_FILE, "*.keystore,*.jks"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/release_user"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "keystore/release_password"), ""));
@@ -2107,9 +2112,22 @@ bool EditorExportPlatformAndroid::can_export(const Ref<EditorExportPreset> &p_pr
 
 	// Validate the rest of the configuration.
 
-	String dk = p_preset->get("keystore/debug");
-	String dk_user = p_preset->get("keystore/debug_user");
-	String dk_password = p_preset->get("keystore/debug_password");
+	String dk;
+	String dk_user;
+	String dk_password;
+
+	String default_debug = EditorSettings::get_singleton()->get("key_manager/default_debug");
+	int debug_key = p_preset->get("keystore/debug_key");
+	if (debug_key == KEY_FROM_MANAGER && !default_debug.empty()) {
+		Dictionary data = EditorSettings::get_singleton()->get("key_manager/keys").get(default_debug);
+		dk = data["path"];
+		dk_user = data["alias"];
+		dk_password = data["password"];
+	} else {
+		dk = p_preset->get("keystore/debug");
+		dk_user = p_preset->get("keystore/debug_user");
+		dk_password = p_preset->get("keystore/debug_password");
+	}
 
 	if ((dk.empty() || dk_user.empty() || dk_password.empty()) && (!dk.empty() || !dk_user.empty() || !dk_password.empty())) {
 		valid = false;
@@ -2149,9 +2167,22 @@ bool EditorExportPlatformAndroid::can_export(const Ref<EditorExportPreset> &p_pr
 		}
 	}
 
-	String rk = p_preset->get("keystore/release");
-	String rk_user = p_preset->get("keystore/release_user");
-	String rk_password = p_preset->get("keystore/release_password");
+	String rk;
+	String rk_user;
+	String rk_password;
+
+	String default_release = EditorSettings::get_singleton()->get("key_manager/default_release");
+	int release_key = p_preset->get("keystore/release_key");
+	if (release_key == KEY_FROM_MANAGER && !default_release.empty()) {
+		Dictionary data = EditorSettings::get_singleton()->get("key_manager/keys").get(default_release);
+		rk = data["path"];
+		rk_user = data["alias"];
+		rk_password = data["password"];
+	} else {
+		rk = p_preset->get("keystore/release");
+		rk_user = p_preset->get("keystore/release_user");
+		rk_password = p_preset->get("keystore/release_password");
+	}
 
 	if ((rk.empty() || rk_user.empty() || rk_password.empty()) && (!rk.empty() || !rk_user.empty() || !rk_password.empty())) {
 		valid = false;

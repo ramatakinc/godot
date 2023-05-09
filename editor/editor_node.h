@@ -52,7 +52,7 @@ class ConfirmationDialog;
 class Control;
 class DependencyEditor;
 class DependencyErrorDialog;
-class EditorAbout;
+class EditorAboutRamatak;
 class EditorExport;
 class EditorFeatureProfileManager;
 class EditorFileServer;
@@ -283,6 +283,7 @@ private:
 	MenuButton *settings_menu;
 	MenuButton *help_menu;
 	PopupMenu *tool_menu;
+	PanelContainer *launch_pad;
 	ToolButton *export_button;
 	ToolButton *prev_scene;
 	ToolButton *play_button;
@@ -321,7 +322,7 @@ private:
 	Button *select_current_scene_button;
 	AcceptDialog *accept;
 	AcceptDialog *save_accept;
-	EditorAbout *about;
+	EditorAboutRamatak *about;
 	AcceptDialog *warning;
 
 	int overridden_default_layout;
@@ -383,6 +384,7 @@ private:
 	Timer *dock_drag_timer;
 	bool docks_visible;
 
+	PanelContainer *tabbar_panel;
 	HBoxContainer *tabbar_container;
 	ToolButton *distraction_free;
 	ToolButton *scene_tab_add;

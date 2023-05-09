@@ -69,7 +69,7 @@
 
 #include "editor/audio_stream_preview.h"
 #include "editor/dependency_editor.h"
-#include "editor/editor_about.h"
+#include "editor/editor_about_ramatak.h"
 #include "editor/editor_audio_buses.h"
 #include "editor/editor_export.h"
 #include "editor/editor_feature_profile.h"
@@ -486,6 +486,9 @@ void EditorNode::_notification(int p_what) {
 			get_tree()->connect("files_dropped", this, "_dropped_files");
 			get_tree()->connect("global_menu_action", this, "_global_menu_action");
 
+			tabbar_panel->add_style_override("panel", gui_base->get_stylebox("tabbar_background", "TabContainer"));
+			launch_pad->add_style_override("panel", gui_base->get_stylebox("LaunchPad", "EditorStyles"));
+
 			/* DO NOT LOAD SCENES HERE, WAIT FOR FILE SCANNING AND REIMPORT TO COMPLETE */
 		} break;
 
@@ -577,6 +580,9 @@ void EditorNode::_notification(int p_what) {
 			settings_menu->add_style_override("hover", gui_base->get_stylebox("MenuHover", "EditorStyles"));
 			help_menu->add_style_override("hover", gui_base->get_stylebox("MenuHover", "EditorStyles"));
 
+			tabbar_panel->add_style_override("panel", gui_base->get_stylebox("tabbar_background", "TabContainer"));
+			launch_pad->add_style_override("panel", gui_base->get_stylebox("LaunchPad", "EditorStyles"));
+
 			if (EDITOR_GET("interface/scene_tabs/resize_if_many_tabs")) {
 				scene_tabs->set_min_width(int(EDITOR_GET("interface/scene_tabs/minimum_width")) * EDSCALE);
 			} else {
@@ -625,6 +631,7 @@ void EditorNode::_notification(int p_what) {
 			PopupMenu *p = help_menu->get_popup();
 			p->set_item_icon(p->get_item_index(HELP_SEARCH), gui_base->get_icon("HelpSearch", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_DOCS), gui_base->get_icon("ExternalLink", "EditorIcons"));
+#if 0
 			p->set_item_icon(p->get_item_index(HELP_QA), gui_base->get_icon("ExternalLink", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_REPORT_A_BUG), gui_base->get_icon("ExternalLink", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_SUGGEST_A_FEATURE), gui_base->get_icon("ExternalLink", "EditorIcons"));
@@ -632,6 +639,8 @@ void EditorNode::_notification(int p_what) {
 			p->set_item_icon(p->get_item_index(HELP_COMMUNITY), gui_base->get_icon("ExternalLink", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_ABOUT), gui_base->get_icon("Godot", "EditorIcons"));
 			p->set_item_icon(p->get_item_index(HELP_SUPPORT_GODOT_DEVELOPMENT), gui_base->get_icon("Heart", "EditorIcons"));
+#endif
+			p->set_item_icon(p->get_item_index(HELP_ABOUT), gui_base->get_icon("Issue", "EditorIcons"));
 			_update_update_spinner();
 		} break;
 
@@ -2926,7 +2935,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			OS::get_singleton()->shell_open("https://godotengine.org/community");
 		} break;
 		case HELP_ABOUT: {
-			about->popup_centered_minsize(Size2(780, 500) * EDSCALE);
+			about->popup_centered();
 		} break;
 		case HELP_SUPPORT_GODOT_DEVELOPMENT: {
 			OS::get_singleton()->shell_open("https://godotengine.org/donate");
@@ -6261,7 +6270,10 @@ EditorNode::EditorNode() {
 	scene_tabs->connect("reposition_active_tab_request", this, "_reposition_active_tab");
 	scene_tabs->connect("resized", this, "_update_scene_tabs");
 
+	tabbar_panel = memnew(PanelContainer);
+	srt->add_child(tabbar_panel);
 	tabbar_container = memnew(HBoxContainer);
+	tabbar_panel->add_child(tabbar_container);
 	scene_tabs->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 
 	scene_tabs_context_menu = memnew(PopupMenu);
@@ -6269,7 +6281,6 @@ EditorNode::EditorNode() {
 	scene_tabs_context_menu->connect("id_pressed", this, "_menu_option");
 	scene_tabs_context_menu->set_hide_on_window_lose_focus(true);
 
-	srt->add_child(tabbar_container);
 	tabbar_container->add_child(scene_tabs);
 	distraction_free = memnew(ToolButton);
 #ifdef OSX_ENABLED
@@ -6337,9 +6348,6 @@ EditorNode::EditorNode() {
 	gui_base->add_child(save_accept);
 	save_accept->connect("confirmed", this, "_menu_option", make_binds((int)MenuOptions::FILE_SAVE_AS_SCENE));
 
-	project_export = memnew(ProjectExportDialog);
-	gui_base->add_child(project_export);
-
 	dependency_error = memnew(DependencyErrorDialog);
 	gui_base->add_child(dependency_error);
 
@@ -6348,6 +6356,10 @@ EditorNode::EditorNode() {
 
 	settings_config_dialog = memnew(EditorSettingsDialog);
 	gui_base->add_child(settings_config_dialog);
+
+	project_export = memnew(ProjectExportDialog);
+	gui_base->add_child(project_export);
+	project_export->connect("key_manager_requested", settings_config_dialog, "popup_edit_settings", varray(2));
 
 	project_settings = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings);
@@ -6361,7 +6373,7 @@ EditorNode::EditorNode() {
 
 	feature_profile_manager = memnew(EditorFeatureProfileManager);
 	gui_base->add_child(feature_profile_manager);
-	about = memnew(EditorAbout);
+	about = memnew(EditorAboutRamatak);
 	gui_base->add_child(about);
 	feature_profile_manager->connect("current_feature_profile_changed", this, "_feature_profile_changed");
 
@@ -6610,9 +6622,13 @@ EditorNode::EditorNode() {
 	p->add_icon_shortcut(gui_base->get_icon("Godot", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About Godot")), HELP_ABOUT);
 	p->add_icon_shortcut(gui_base->get_icon("Heart", "EditorIcons"), ED_SHORTCUT("editor/support_development", TTR("Support Godot Development")), HELP_SUPPORT_GODOT_DEVELOPMENT);
 #endif
+	p->add_icon_shortcut(gui_base->get_icon("Issue", "EditorIcons"), ED_SHORTCUT("editor/about", TTR("About Ramatak Mobile Studio")), HELP_ABOUT);
+
+	launch_pad = memnew(PanelContainer);
+	menu_hb->add_child(launch_pad);
 
 	HBoxContainer *play_hb = memnew(HBoxContainer);
-	menu_hb->add_child(play_hb);
+	launch_pad->add_child(play_hb);
 
 	play_button = memnew(ToolButton);
 	play_hb->add_child(play_button);

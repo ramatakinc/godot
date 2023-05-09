@@ -31,7 +31,7 @@
 #ifndef PROJECT_MANAGER_H
 #define PROJECT_MANAGER_H
 
-#include "editor/editor_about.h"
+#include "editor/editor_about_ramatak.h"
 #include "editor/plugins/asset_library_editor_plugin.h"
 #include "scene/gui/dialogs.h"
 #include "scene/gui/file_dialog.h"
@@ -72,7 +72,7 @@ class ProjectManager : public Control {
 	ConfirmationDialog *multi_scan_ask;
 	ConfirmationDialog *ask_update_settings;
 	ConfirmationDialog *open_templates = nullptr;
-	EditorAbout *about;
+	EditorAboutRamatak *about;
 	AcceptDialog *run_error_diag;
 	AcceptDialog *dialog_error;
 	ProjectDialog *npdialog;

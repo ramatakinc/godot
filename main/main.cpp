@@ -1532,18 +1532,64 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 #ifdef TOOLS_ENABLED
 	ClassDB::set_current_api(ClassDB::API_EDITOR);
 	EditorNode::register_editor_types();
-
 	ClassDB::set_current_api(ClassDB::API_CORE);
-	String JAVA_HOME = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("jdk/");
-	OS::get_singleton()->set_environment("JAVA_HOME", JAVA_HOME);
 
-	String RAMATAK_ANDROID_SDK_HOME = OS::get_singleton()->get_environment("RAMATAK_ANDROID_SDK_HOME");
-	if (RAMATAK_ANDROID_SDK_HOME.empty()) {
-		String sdk_dir = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("android/sdk");
-		print_line("MAIN: RAMATAK_ANDROID_SDK_HOME not set, defaulting to " + sdk_dir);
-		OS::get_singleton()->set_environment("RAMATAK_ANDROID_SDK_HOME", sdk_dir);
+	bool respect_all_env = !OS::get_singleton()->get_environment("RAMATAK_RESPECT_ALL_ENV").empty();
+	bool respect_java_home = !OS::get_singleton()->get_environment("RAMATAK_RESPECT_JAVA_HOME").empty();
+	bool respect_keytool_home = !OS::get_singleton()->get_environment("RAMATAK_RESPECT_KEYTOOL_HOME").empty();
+	bool respect_sdkamanager_home = !OS::get_singleton()->get_environment("RAMATAK_RESPECT_SDKMANAGER_HOME").empty();
+	bool respect_android_home = !OS::get_singleton()->get_environment("RAMATAK_RESPECT_ANDROID_HOME").empty();
+
+	String java_default = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("jdk/");
+	String java_home = OS::get_singleton()->get_environment("JAVA_HOME");
+	if (respect_java_home || respect_all_env) {
+		if (java_home.empty()) {
+			print_line("MAIN: JAVA_HOME not set, defaulting to " + java_default);
+			OS::get_singleton()->set_environment("JAVA_HOME", java_default);
+		} else {
+			print_line("MAIN: JAVA_HOME set, to " + java_home);
+		}
 	} else {
-		print_line("MAIN: RAMATAK_ANDROID_SDK_HOME set, to " + RAMATAK_ANDROID_SDK_HOME);
+		print_line("MAIN: JAVA_HOME set, to " + java_default);
+	}
+
+	String keytool_default = OS::get_singleton()->get_environment("JAVA_HOME").plus_file("bin/keytool");
+	String keytool_home = OS::get_singleton()->get_environment("RAMATAK_KEYTOOL_HOME");
+	if (respect_keytool_home || respect_all_env) {
+		if (keytool_home.empty()) {
+			print_line("MAIN: RAMATAK_KEYTOOL_HOME not set, defaulting to " + keytool_default);
+			OS::get_singleton()->set_environment("RAMATAK_KEYTOOL_HOME", keytool_default);
+		} else {
+			print_line("MAIN: RAMATAK_KEYTOOL_HOME set, to " + keytool_home);
+		}
+	} else {
+		print_line("MAIN: RAMATAK_KEYTOOL_HOME set, to " + keytool_default);
+	}
+
+	String sdkmanager_default = OS::get_singleton()->get_environment("JAVA_HOME").plus_file("bin/sdkmanager");
+	String sdkmanager_home = OS::get_singleton()->get_environment("RAMATAK_SDKMANAGER_HOME");
+	if (respect_sdkamanager_home || respect_all_env) {
+		if (keytool_home.empty()) {
+			print_line("MAIN: RAMATAK_SDKMANAGER_HOME not set, defaulting to " + sdkmanager_default);
+			OS::get_singleton()->set_environment("RAMATAK_SDKMANAGER_HOME", sdkmanager_default);
+		} else {
+			print_line("MAIN: RAMATAK_SDKMANAGER_HOME set, to " + sdkmanager_home);
+		}
+	} else {
+		print_line("MAIN: RAMATAK_SDKMANAGER_HOME set, to " + sdkmanager_default);
+	}
+
+	String ramatak_android_sdk_default = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("android/sdk");
+	String ramatak_android_sdk_home = OS::get_singleton()->get_environment("RAMATAK_ANDROID_SDK_HOME");
+	if (respect_android_home || respect_all_env) {
+		if (ramatak_android_sdk_home.empty()) {
+			print_line("MAIN: RAMATAK_ANDROID_SDK_HOME not set, defaulting to " + ramatak_android_sdk_default);
+			OS::get_singleton()->set_environment("RAMATAK_ANDROID_SDK_HOME", ramatak_android_sdk_default);
+		} else {
+			print_line("MAIN: RAMATAK_ANDROID_SDK_HOME set, to " + ramatak_android_sdk_home);
+		}
+	} else {
+		print_line("MAIN: RAMATAK_ANDROID_SDK_HOME set, to " + ramatak_android_sdk_default);
 	}
 #endif
 
