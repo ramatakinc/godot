@@ -12,6 +12,10 @@ void AdServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_plugin_priority_order", "priorities"), &AdServer::set_plugin_priority_order);
 	ClassDB::bind_method(D_METHOD("get_plugin_priority_order"), &AdServer::get_plugin_priority_order);
 
+	ClassDB::bind_method(D_METHOD("_ad_clicked", "request_token"), &AdServer::_ad_clicked);
+
+	ADD_SIGNAL(MethodInfo("ad_clicked", PropertyInfo(Variant::INT, "request_token")));
+
 	BIND_ENUM_CONSTANT(AdType::AD_TYPE_BANNER);
 	BIND_ENUM_CONSTANT(AdType::AD_TYPE_INTERSTITIAL);
 	BIND_ENUM_CONSTANT(AdType::AD_TYPE_REWARDED);
@@ -25,6 +29,7 @@ void AdServer::_bind_methods() {
 
 void AdServer::register_ad_plugin(String p_name, Ref<AdPlugin> p_plugin) {
 	p_plugin->init_plugin();
+	p_plugin->connect("ad_clicked", this, "_ad_clicked");
 	if (!this->ad_plugins.has(p_name)) {
 		this->ad_plugin_list.push_back(p_name);
 	}
@@ -65,14 +70,14 @@ Variant AdServer::show_other(String p_ad_unit) {
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
 		if (network_specific_id.length() > 0) {
 			// Plugin `i` can handle the specified ad_unit.
-			Variant request_token = rand.rand();
+			Variant request_token = rand.rand() & 0x7FFFFFFF;
 			ad_plugins[ad_plugin_priorities[i]]->show_other(network_specific_id, request_token, (AdServer::AdType)ad_type);
 			return request_token;
 		}
 	}
 	WARN_PRINT_ONCE("No ad plugin is capable of handling ad unit.");
 	// There might be a better return value here.
-	return "";
+	return Variant();
 }
 
 Variant AdServer::show_banner(String p_ad_unit, BannerAdSize p_size, BannerAdLocation p_location) {
@@ -100,7 +105,7 @@ Variant AdServer::show_banner(String p_ad_unit, BannerAdSize p_size, BannerAdLoc
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
 		if (network_specific_id.length() > 0) {
 			// Plugin `i` can handle the specified ad_unit.
-			Variant request_token = rand.rand();
+			Variant request_token = rand.rand() & 0x7FFFFFFF;
 			ad_plugins[ad_plugin_priorities[i]]->show_banner(network_specific_id, request_token, size, location);
 			return request_token;
 		}
@@ -121,6 +126,10 @@ Variant AdServer::hide(String p_ad_unit) {
 		}
 	}
 	return request_token;
+}
+
+void AdServer::_ad_clicked(Variant p_request_token) {
+	emit_signal("ad_clicked", p_request_token);
 }
 
 AdServer::AdServer() :

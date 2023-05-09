@@ -9,12 +9,12 @@ void AdPlugin::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("hide_all", "request_token"), &AdPlugin::hide_all);
 
-	ADD_SIGNAL(MethodInfo("shown"));
-	ADD_SIGNAL(MethodInfo("hidden"));
-	ADD_SIGNAL(MethodInfo("closed"));
-	ADD_SIGNAL(MethodInfo("clicked"));
-	ADD_SIGNAL(MethodInfo("finished"));
-	ADD_SIGNAL(MethodInfo("error"));
+	ADD_SIGNAL(MethodInfo("ad_shown", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_hidden", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_closed", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_clicked", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_reward_earned", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_error", PropertyInfo(Variant::INT, "request_id")));
 
 	BIND_ENUM_CONSTANT(OK);
 	BIND_ENUM_CONSTANT(AUTH_ERROR);

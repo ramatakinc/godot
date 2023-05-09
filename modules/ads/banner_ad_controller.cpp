@@ -1,5 +1,6 @@
 #include "banner_ad_controller.h"
 #include "servers/ramatak/ad_server.h"
+#include "core/engine.h"
 
 void BannerAdController::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_auto_show", "auto_show"), &BannerAdController::set_auto_show);
@@ -16,7 +17,8 @@ void BannerAdController::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "location", PROPERTY_HINT_ENUM, "Bottom,Top"), "set_location", "get_location");
 }
 void BannerAdController::_notification(int p_what) {
-	if (p_what == NOTIFICATION_READY && auto_show) {
+	AdController::_notification(p_what);
+	if (p_what == NOTIFICATION_READY && auto_show && !Engine::get_singleton()->is_editor_hint()) {
 		show();
 	}
 }
@@ -34,7 +36,7 @@ void BannerAdController::show() {
 		WARN_PRINT("Attempting to show banner advertisement, but no ad unit selected.");
 		return;
 	}
-	AdServer::get_singleton()->show_banner(ad_unit, size, location);
+	request_tokens.append(AdServer::get_singleton()->show_banner(ad_unit, size, location));
 }
 
 AdServer::BannerAdSize BannerAdController::get_size() const {

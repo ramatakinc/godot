@@ -3,6 +3,7 @@
 #define _AD_CONTROLLER_H
 
 #include "scene/main/node.h"
+#include "core/variant.h"
 
 class AdController : public Node {
 	GDCLASS(AdController, Node);
@@ -15,7 +16,7 @@ protected:
 	};
 
 	Status status;
-
+	Array request_tokens;
 	String ad_unit;
 
 	static void	_bind_methods();
@@ -27,6 +28,8 @@ public:
 
 	void show();
 	void hide();
+
+	void _ad_clicked(Variant p_request_token);
 
 	AdController();
 };
