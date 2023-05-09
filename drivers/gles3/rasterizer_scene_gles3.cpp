@@ -4188,6 +4188,8 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 
 	if (use_depth_prepass) {
 		//pre z pass
+		SECTION_START("DEPTH PREPASS");
+		TIMESTAMP("depth_prepass");
 
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
@@ -4216,6 +4218,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 			_bind_depth_texture();
 		}
 
+		SECTION_END();
 		fb_cleared = true;
 		render_pass++;
 		state.used_depth_prepass = true;
@@ -4483,6 +4486,8 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 
 	render_list.sort_by_key(false);
 
+	SECTION_START("OPAQUE");
+	TIMESTAMP("opaque");
 	if (state.directional_light_count == 0) {
 		directional_light = nullptr;
 		_render_list(render_list.elements, render_list.element_count, p_cam_transform, p_cam_projection, sky, false, false, false, false, use_shadows);
@@ -4496,6 +4501,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 			_render_list(render_list.elements, render_list.element_count, p_cam_transform, p_cam_projection, sky, false, false, false, i > 0, use_shadows);
 		}
 	}
+	SECTION_END();
 
 	state.scene_shader.set_conditional(SceneShaderGLES3::USE_MULTIPLE_RENDER_TARGETS, false);
 
@@ -4511,7 +4517,10 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 		*/
 
 		if (sky && sky->panorama.is_valid()) {
+			SECTION_START("SKY");
+			TIMESTAMP("sky");
 			_draw_sky(sky, p_cam_projection, p_cam_transform, false, env->sky_custom_fov, env->bg_energy, env->sky_orientation);
+			SECTION_END();
 		}
 	}
 
@@ -4568,6 +4577,8 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 
 	render_list.sort_by_reverse_depth_and_priority(true);
 
+	SECTION_START("ALPHA");
+	TIMESTAMP("alpha");
 	if (state.directional_light_count <= 1) {
 		if (state.directional_light_count == 1) {
 			directional_light = directional_lights[0];
@@ -4614,6 +4625,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 			}
 		}
 	}
+	SECTION_END();
 
 	if (probe) {
 		//rendering a probe, do no more!
@@ -4623,7 +4635,12 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 	if (env && (env->dof_blur_far_enabled || env->dof_blur_near_enabled) && storage->frame.current_rt && storage->frame.current_rt->buffers.active) {
 		_prepare_depth_texture();
 	}
+	SECTION_START("POST PROCESS");
+	TIMESTAMP("post_process");
 	_post_process(env, p_cam_projection);
+	SECTION_END();
+	TIMESTAMP_END();
+
 	// Needed only for debugging
 	/*	if (shadow_atlas && storage->frame.current_rt) {
 
