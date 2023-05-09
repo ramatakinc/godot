@@ -123,8 +123,10 @@ void Rasterizer::begin_frame_timings() {
 						}
 					}
 					float time_ms = USEC_TO_SEC(time / 1000);
-					values.push_back(name);
-					values.push_back(time_ms);
+					if (time_ms < 200) {
+						values.push_back(name);
+						values.push_back(time_ms);
+					}
 				}
 			}
 

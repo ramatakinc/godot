@@ -194,12 +194,14 @@ void RasterizerGLES3::initialize() {
 	glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
 
 	bool found_arb_timer_query = false;
-
+	bool found_ext_disjoint_timer_query = false; // fallback for android devices
 	for (int i = 0; i < extension_count; ++i) {
 		if (strcmp((const char *)glGetStringi(GL_EXTENSIONS, i), "GL_KHR_debug") == 0) {
 			khr_debug_enabled = true;
 		} else if (strcmp((const char *)glGetStringi(GL_EXTENSIONS, i), "GL_ARB_timer_query") == 0) {
 			found_arb_timer_query = true;
+		} else if (strcmp((const char *)glGetStringi(GL_EXTENSIONS, i), "GL_EXT_disjoint_timer_query") == 0) {
+			found_ext_disjoint_timer_query = true;
 		}
 	}
 	if (khr_debug_enabled) {
@@ -212,6 +214,12 @@ void RasterizerGLES3::initialize() {
 		del_queries_func = (void (*)(int, unsigned int *))eglGetProcAddress("glDeleteQueries");
 		query_counter_func = (void (*)(unsigned int, unsigned int))eglGetProcAddress("glQueryCounter");
 		get_query_func = (void (*)(unsigned int, unsigned int, uint64_t *))eglGetProcAddress("glGetQueryObjectui64v");
+		enable_frame_timings();
+	} else if (found_ext_disjoint_timer_query) {
+		gen_queries_func = (void (*)(int, unsigned int *))eglGetProcAddress("glGenQueriesEXT");
+		del_queries_func = (void (*)(int, unsigned int *))eglGetProcAddress("glDeleteQueriesEXT");
+		query_counter_func = (void (*)(unsigned int, unsigned int))eglGetProcAddress("glQueryCounterEXT");
+		get_query_func = (void (*)(unsigned int, unsigned int, uint64_t *))eglGetProcAddress("glGetQueryObjectui64vEXT");
 		enable_frame_timings();
 	}
 
