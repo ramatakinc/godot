@@ -38,6 +38,7 @@
 #include "editor_property_name_processor.h"
 #include "editor_scale.h"
 #include "editor_settings.h"
+#include "editor/editor_key_manager.h"
 #include "scene/gui/margin_container.h"
 #include "script_editor_debugger.h"
 
@@ -77,18 +78,20 @@ void EditorSettingsDialog::cancel_pressed() {
 	EditorSettings::get_singleton()->notify_changes();
 }
 
-void EditorSettingsDialog::popup_edit_settings() {
+void EditorSettingsDialog::popup_edit_settings(int p_idx) {
 	if (!EditorSettings::get_singleton()) {
 		return;
+	}
+
+	if (p_idx > -1) {
+		ERR_FAIL_INDEX(p_idx, tabs->get_tab_count());
+		tabs->set_current_tab(p_idx);
 	}
 
 	EditorSettings::get_singleton()->list_text_editor_themes(); // make sure we have an up to date list of themes
 
 	inspector->edit(EditorSettings::get_singleton());
 	inspector->get_inspector()->update_tree();
-
-	search_box->select_all();
-	search_box->grab_focus();
 
 	_update_shortcuts();
 	set_process_unhandled_input(true);
@@ -386,6 +389,8 @@ void EditorSettingsDialog::_editor_restart_close() {
 }
 
 void EditorSettingsDialog::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("popup_edit_settings"), &EditorSettingsDialog::popup_edit_settings);
+
 	ClassDB::bind_method(D_METHOD("_unhandled_input"), &EditorSettingsDialog::_unhandled_input);
 	ClassDB::bind_method(D_METHOD("_settings_save"), &EditorSettingsDialog::_settings_save);
 	ClassDB::bind_method(D_METHOD("_settings_changed"), &EditorSettingsDialog::_settings_changed);
@@ -506,6 +511,10 @@ EditorSettingsDialog::EditorSettingsDialog() {
 	add_child(timer);
 	EditorSettings::get_singleton()->connect("settings_changed", this, "_settings_changed");
 	get_ok()->set_text(TTR("Close"));
+
+	// Key Manager Tab
+
+	tabs->add_child(memnew(EditorKeyManager));
 
 	updating = false;
 }

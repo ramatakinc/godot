@@ -101,7 +101,7 @@ protected:
 	static void _bind_methods();
 
 public:
-	void popup_edit_settings();
+	void popup_edit_settings(int p_idx = -1);
 
 	EditorSettingsDialog();
 	~EditorSettingsDialog();

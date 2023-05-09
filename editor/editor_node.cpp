@@ -6348,9 +6348,6 @@ EditorNode::EditorNode() {
 	gui_base->add_child(save_accept);
 	save_accept->connect("confirmed", this, "_menu_option", make_binds((int)MenuOptions::FILE_SAVE_AS_SCENE));
 
-	project_export = memnew(ProjectExportDialog);
-	gui_base->add_child(project_export);
-
 	dependency_error = memnew(DependencyErrorDialog);
 	gui_base->add_child(dependency_error);
 
@@ -6359,6 +6356,10 @@ EditorNode::EditorNode() {
 
 	settings_config_dialog = memnew(EditorSettingsDialog);
 	gui_base->add_child(settings_config_dialog);
+
+	project_export = memnew(ProjectExportDialog);
+	gui_base->add_child(project_export);
+	project_export->connect("key_manager_requested", settings_config_dialog, "popup_edit_settings", varray(2));
 
 	project_settings = memnew(ProjectSettingsEditor(&editor_data));
 	gui_base->add_child(project_settings);
