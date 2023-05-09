@@ -48,6 +48,7 @@ void EditorPropertyAdUnit::set_option_button_clip(bool p_enable) {
 
 void EditorPropertyAdUnit::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_option_selected"), &EditorPropertyAdUnit::_option_selected);
+	ClassDB::bind_method(D_METHOD("_refresh_options"), &EditorPropertyAdUnit::_refresh_options);
 }
 
 EditorPropertyAdUnit::EditorPropertyAdUnit() {

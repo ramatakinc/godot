@@ -4,6 +4,7 @@
 #include "core/class_db.h"
 #include "core/reference.h"
 #include "core/math/rect2.h"
+#include "servers/ramatak/ad_server.h"
 
 class AdPlugin : public Reference {
 	GDCLASS(AdPlugin, Reference);
@@ -21,7 +22,7 @@ public:
 
 	virtual AdPluginResult init_plugin() = 0;
 
-	virtual AdPluginResult show_other(String p_ad_unit, Variant p_request_token) = 0;
+	virtual AdPluginResult show_other(String p_ad_unit, Variant p_request_token, AdServer::AdType p_ad_type) = 0;
 	virtual AdPluginResult show_banner(String p_ad_unit, Variant p_request_token, String p_size, String p_location) = 0;
 	virtual AdPluginResult hide(String p_ad_unit, Variant p_request_token) = 0;
 

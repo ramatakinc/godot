@@ -5,8 +5,9 @@
 #include "core/object.h"
 #include "core/list.h"
 #include "core/reference.h"
-#include "servers/ramatak/ad_plugin.h"
 #include "core/math/random_pcg.h"
+
+class AdPlugin;
 
 class AdServer : public Object {
 	GDCLASS(AdServer, Object);

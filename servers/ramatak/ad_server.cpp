@@ -2,6 +2,7 @@
 
 #include "core/project_settings.h"
 #include "core/ramatak/monetization_settings.h"
+#include "servers/ramatak/ad_plugin.h"
 
 AdServer *AdServer::singleton = nullptr;
 
@@ -53,12 +54,19 @@ Dictionary AdServer::get_plugin_config(String p_plugin) const {
 
 Variant AdServer::show_other(String p_ad_unit) {
 	Array ad_plugin_priorities = (Array)ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
+	String ad_unit_setting = "ramatak/monetization/ad_units";
+	ProjectSettings *project_settings = ProjectSettings::get_singleton();
+
+	Dictionary dict = project_settings->get(ad_unit_setting);
+	Dictionary ad_unit_config = dict[p_ad_unit];
+	int ad_type = (int) ad_unit_config["ad_unit_type"];
+
 	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
 		if (network_specific_id.length() > 0) {
 			// Plugin `i` can handle the specified ad_unit.
 			Variant request_token = rand.rand();
-			ad_plugins[ad_plugin_priorities[i]]->show_other(network_specific_id, request_token);
+			ad_plugins[ad_plugin_priorities[i]]->show_other(network_specific_id, request_token, (AdServer::AdType)ad_type);
 			return request_token;
 		}
 	}
@@ -68,7 +76,6 @@ Variant AdServer::show_other(String p_ad_unit) {
 }
 
 Variant AdServer::show_banner(String p_ad_unit, BannerAdSize p_size, BannerAdLocation p_location) {
-	Dictionary extra_data;
 	// This looks gross, and it is, but these values are going to cross an FFI boundary into a plugin and
 	// it's much less error-prone to pass a string than an integer, especially because these plugins might
 	// not even be first-party.

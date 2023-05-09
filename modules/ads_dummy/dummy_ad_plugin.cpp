@@ -15,7 +15,7 @@ AdPlugin::AdPluginResult DummyAdPlugin::show_banner(String p_ad_unit, Variant p_
 	return AdPluginResult::OK;
 }
 
-AdPlugin::AdPluginResult DummyAdPlugin::show_other(String p_ad_unit, Variant p_request_token) {
+AdPlugin::AdPluginResult DummyAdPlugin::show_other(String p_ad_unit, Variant p_request_token, AdServer::AdType p_ad_type) {
 	print_line(vformat("[Dummy ad plugin] Showing other ad unit `%s`", p_ad_unit));
 	Variant ad_unit_variant = p_ad_unit;
 	Variant *args[] = { &ad_unit_variant, &p_request_token };

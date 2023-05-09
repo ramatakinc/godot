@@ -104,6 +104,13 @@ void RamatakSettingsAdUnitEditor::clear() {
 	edits.clear();
 	labels.clear();
 	plugins.clear();
+
+	// Remove any stragglers.
+	while (grid_container->get_child_count() != 0) {
+		Node* child = grid_container->get_child(0);
+		grid_container->remove_child(child);
+		memdelete(child);
+	}
 }
 
 void RamatakSettingsAdUnitEditor::set_disabled(bool p_disabled) {
@@ -172,6 +179,7 @@ void RamatakSettingsEditor::_revert() {
 	}
 	save_button->set_disabled(true);
 	revert_button->set_disabled(true);
+	ad_unit_editor->set_ad_unit(ad_unit_editor->get_ad_unit());
 }
 
 void RamatakSettingsEditor::_save() {
