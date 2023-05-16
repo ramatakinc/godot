@@ -25,6 +25,12 @@
 			<description>
 			</description>
 		</method>
+		<method name="get_base_editor" qualifiers="const">
+			<return type="TextEdit" />
+			<description>
+				Returns the underlying TextEdit control used for editing scripts.
+			</description>
+		</method>
 		<method name="get_current_script">
 			<return type="Script" />
 			<description>
