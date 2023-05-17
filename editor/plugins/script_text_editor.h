@@ -33,6 +33,7 @@
 
 #include "scene/gui/color_picker.h"
 #include "scene/gui/dialogs.h"
+#include "scene/gui/text_edit.h"
 #include "scene/gui/tree.h"
 #include "script_editor_plugin.h"
 
@@ -236,6 +237,7 @@ public:
 	virtual void set_debugger_active(bool p_active);
 
 	Control *get_edit_menu();
+	TextEdit *get_code_editor_text_edit();
 	virtual void clear_edit_menu();
 	static void register_editor();
 
