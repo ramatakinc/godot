@@ -38,6 +38,12 @@
 			<description>
 			</description>
 		</method>
+		<method name="get_edit_menu">
+			<return type="Control" />
+			<description>
+				Returns the edit menu toolbar in the Script Code Editor
+			</description>
+		</method>
 		<method name="get_open_scripts" qualifiers="const">
 			<return type="Array" />
 			<description>

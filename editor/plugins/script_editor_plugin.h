@@ -398,6 +398,7 @@ class ScriptEditor : public PanelContainer {
 
 	Ref<Script> _get_current_script();
 	Array _get_open_scripts() const;
+	Control *_get_edit_menu();
 
 	Ref<TextFile> _load_text_file(const String &p_path, Error *r_error);
 	Error _save_text_file(Ref<TextFile> p_text_file, const String &p_path);

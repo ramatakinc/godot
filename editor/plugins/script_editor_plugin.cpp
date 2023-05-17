@@ -958,6 +958,10 @@ Array ScriptEditor::_get_open_scripts() const {
 	return ret;
 }
 
+Control *ScriptEditor::_get_edit_menu() {
+	return Object::cast_to<ScriptTextEditor>(_get_current_editor())->get_edit_menu();
+}
+
 bool ScriptEditor::toggle_scripts_panel() {
 	list_split->set_visible(!list_split->is_visible());
 	EditorSettings::get_singleton()->set_project_metadata("scripts_panel", "show_scripts_panel", list_split->is_visible());
@@ -3235,6 +3239,7 @@ void ScriptEditor::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_open_scripts"), &ScriptEditor::_get_open_scripts);
 	ClassDB::bind_method(D_METHOD("open_script_create_dialog", "base_name", "base_path"), &ScriptEditor::open_script_create_dialog);
 	ClassDB::bind_method(D_METHOD("reload_scripts"), &ScriptEditor::reload_scripts);
+	ClassDB::bind_method(D_METHOD("get_edit_menu"), &ScriptEditor::_get_edit_menu);
 
 	ADD_SIGNAL(MethodInfo("editor_script_changed", PropertyInfo(Variant::OBJECT, "script", PROPERTY_HINT_RESOURCE_TYPE, "Script")));
 	ADD_SIGNAL(MethodInfo("script_close", PropertyInfo(Variant::OBJECT, "script", PROPERTY_HINT_RESOURCE_TYPE, "Script")));
