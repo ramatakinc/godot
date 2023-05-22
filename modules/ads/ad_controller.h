@@ -29,7 +29,12 @@ public:
 	void show();
 	void hide();
 
+	void _ad_loaded(Variant p_request_token);
+	void _ad_shown(Variant p_request_token);
 	void _ad_clicked(Variant p_request_token);
+	void _ad_closed(Variant p_request_token);
+	void _ad_reward_earned(Variant p_request_token);
+	void _ad_error(Variant p_request_token, Variant p_message);
 
 	AdController();
 };

@@ -12,9 +12,19 @@ void AdServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_plugin_priority_order", "priorities"), &AdServer::set_plugin_priority_order);
 	ClassDB::bind_method(D_METHOD("get_plugin_priority_order"), &AdServer::get_plugin_priority_order);
 
+	ClassDB::bind_method(D_METHOD("_ad_loaded", "request_token"), &AdServer::_ad_loaded);
+	ClassDB::bind_method(D_METHOD("_ad_shown", "request_token"), &AdServer::_ad_shown);
 	ClassDB::bind_method(D_METHOD("_ad_clicked", "request_token"), &AdServer::_ad_clicked);
+	ClassDB::bind_method(D_METHOD("_ad_closed", "request_token"), &AdServer::_ad_closed);
+	ClassDB::bind_method(D_METHOD("_ad_reward_earned", "request_token"), &AdServer::_ad_reward_earned);
+	ClassDB::bind_method(D_METHOD("_ad_error", "request_token", "message"), &AdServer::_ad_error);
 
-	ADD_SIGNAL(MethodInfo("ad_clicked", PropertyInfo(Variant::INT, "request_token")));
+	ADD_SIGNAL(MethodInfo("ad_loaded", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_shown", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_closed", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_clicked", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_reward_earned", PropertyInfo(Variant::INT, "request_id")));
+	ADD_SIGNAL(MethodInfo("ad_error", PropertyInfo(Variant::INT, "request_id"), PropertyInfo(Variant::STRING, "message")));
 
 	BIND_ENUM_CONSTANT(AdType::AD_TYPE_BANNER);
 	BIND_ENUM_CONSTANT(AdType::AD_TYPE_INTERSTITIAL);
@@ -29,7 +39,6 @@ void AdServer::_bind_methods() {
 
 void AdServer::register_ad_plugin(String p_name, Ref<AdPlugin> p_plugin) {
 	p_plugin->init_plugin();
-	p_plugin->connect("ad_clicked", this, "_ad_clicked");
 	if (!this->ad_plugins.has(p_name)) {
 		this->ad_plugin_list.push_back(p_name);
 	}
@@ -128,8 +137,28 @@ Variant AdServer::hide(String p_ad_unit) {
 	return request_token;
 }
 
+void AdServer::_ad_loaded(Variant p_request_token) {
+	emit_signal("ad_loaded", p_request_token);
+}
+
+void AdServer::_ad_shown(Variant p_request_token) {
+	emit_signal("ad_shown", p_request_token);
+}
+
 void AdServer::_ad_clicked(Variant p_request_token) {
 	emit_signal("ad_clicked", p_request_token);
+}
+
+void AdServer::_ad_closed(Variant p_request_token) {
+	emit_signal("ad_closed", p_request_token);
+}
+
+void AdServer::_ad_reward_earned(Variant p_request_token) {
+	emit_signal("ad_reward_earned", p_request_token);
+}
+
+void AdServer::_ad_error(Variant p_request_token, Variant message) {
+	emit_signal("ad_error", p_request_token, message);
 }
 
 AdServer::AdServer() :

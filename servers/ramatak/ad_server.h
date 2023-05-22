@@ -60,7 +60,12 @@ public:
 	Variant show_other(String p_ad_unit);
 	Variant hide(String p_ad_unit);
 
+	void _ad_loaded(Variant p_request_token);
+	void _ad_shown(Variant p_request_token);
 	void _ad_clicked(Variant p_request_token);
+	void _ad_closed(Variant p_request_token);
+	void _ad_reward_earned(Variant p_request_token);
+	void _ad_error(Variant p_request_token, Variant p_message);
 
 	AdServer();
 	virtual ~AdServer();
