@@ -23,27 +23,28 @@
 		</member>
 	</members>
 	<signals>
-		<signal name="clicked">
+		<signal name="ad_clicked">
 			<description>
 			</description>
 		</signal>
-		<signal name="closed">
+		<signal name="ad_closed">
 			<description>
 			</description>
 		</signal>
-		<signal name="error">
+		<signal name="ad_error">
+			<argument index="0" name="message" type="String" />
 			<description>
 			</description>
 		</signal>
-		<signal name="finished">
+		<signal name="ad_loaded">
 			<description>
 			</description>
 		</signal>
-		<signal name="hidden">
+		<signal name="ad_reward_earned">
 			<description>
 			</description>
 		</signal>
-		<signal name="shown">
+		<signal name="ad_shown">
 			<description>
 			</description>
 		</signal>

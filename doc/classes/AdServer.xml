@@ -24,6 +24,39 @@
 			</description>
 		</method>
 	</methods>
+	<signals>
+		<signal name="ad_clicked">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ad_closed">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ad_error">
+			<argument index="0" name="request_id" type="int" />
+			<argument index="1" name="message" type="String" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ad_loaded">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ad_reward_earned">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+			</description>
+		</signal>
+		<signal name="ad_shown">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+			</description>
+		</signal>
+	</signals>
 	<constants>
 		<constant name="AdType::AD_TYPE_BANNER" value="0" enum="AdType">
 		</constant>

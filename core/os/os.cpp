@@ -646,6 +646,9 @@ bool OS::has_feature(const String &p_feature) {
 	if (p_feature == get_name()) {
 		return true;
 	}
+	if (p_feature == "ramatak") {
+		return true;
+	}
 #ifdef DEBUG_ENABLED
 	if (p_feature == "debug") {
 		return true;

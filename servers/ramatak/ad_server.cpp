@@ -53,6 +53,10 @@ Array AdServer::get_available_plugins() const {
 	return this->ad_plugin_list;
 }
 
+Ref<AdPlugin> AdServer::get_plugin_raw(String p_name) {
+	return this->ad_plugins.get(p_name);
+}
+
 Array AdServer::get_plugin_priority_order() const {
 	return ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
 }
@@ -73,7 +77,7 @@ Variant AdServer::show_other(String p_ad_unit) {
 
 	Dictionary dict = project_settings->get(ad_unit_setting);
 	Dictionary ad_unit_config = dict[p_ad_unit];
-	int ad_type = (int) ad_unit_config["ad_unit_type"];
+	int ad_type = (int)ad_unit_config["ad_unit_type"];
 
 	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);

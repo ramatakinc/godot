@@ -70,9 +70,9 @@
 #include "core/packed_data_container.h"
 #include "core/path_remap.h"
 #include "core/project_settings.h"
+#include "core/ramatak/monetization_settings.h"
 #include "core/translation.h"
 #include "core/undo_redo.h"
-#include "core/ramatak/monetization_settings.h"
 
 static Ref<ResourceFormatSaverBinary> resource_saver_binary;
 static Ref<ResourceFormatLoaderBinary> resource_loader_binary;
@@ -237,13 +237,6 @@ void register_core_settings() {
 
 	GLOBAL_DEF("network/ssl/certificates", "");
 	ProjectSettings::get_singleton()->set_custom_property_info("network/ssl/certificates", PropertyInfo(Variant::STRING, "network/ssl/certificates", PROPERTY_HINT_FILE, "*.crt"));
-
-	GLOBAL_DEF("ramatak/monetization/ad_plugin_config", Dictionary());
-	ProjectSettings::get_singleton()->set_custom_property_info("ramatak/monetization/ad_plugin_config", PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_config"));
-	GLOBAL_DEF("ramatak/monetization/ad_units", Dictionary());
-	ProjectSettings::get_singleton()->set_custom_property_info("ramatak/monetization/ad_units", PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_units"));
-	GLOBAL_DEF("ramatak/monetization/ad_plugin_priorities", Dictionary());
-	ProjectSettings::get_singleton()->set_custom_property_info("ramatak/monetization/ad_plugin_priorities", PropertyInfo(Variant::ARRAY, "ramatak/monetization/ad_plugin_priorities"));
 }
 
 void register_core_singletons() {

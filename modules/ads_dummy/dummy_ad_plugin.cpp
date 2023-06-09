@@ -53,5 +53,14 @@ Array DummyAdPlugin::get_shown_ad_units() {
 	return ad_units;
 }
 
+Array DummyAdPlugin::get_config_key_tooltip_pairs() {
+	Array keys;
+	return keys;
+}
+
+String DummyAdPlugin::get_friendly_name() {
+	return "Dummy";
+}
+
 DummyAdPlugin::DummyAdPlugin() {}
 DummyAdPlugin::~DummyAdPlugin() {}

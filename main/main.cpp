@@ -69,9 +69,9 @@
 #include "servers/navigation_server.h"
 #include "servers/physics_2d_server.h"
 #include "servers/physics_server.h"
+#include "servers/ramatak/ad_server.h"
 #include "servers/register_server_types.h"
 #include "servers/visual_server_callbacks.h"
-#include "servers/ramatak/ad_server.h"
 
 #ifdef TOOLS_ENABLED
 #include "editor/doc/doc_data.h"

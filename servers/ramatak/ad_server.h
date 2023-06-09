@@ -2,10 +2,10 @@
 #define _AD_SERVER_H
 
 #include "core/class_db.h"
-#include "core/object.h"
 #include "core/list.h"
-#include "core/reference.h"
 #include "core/math/random_pcg.h"
+#include "core/object.h"
+#include "core/reference.h"
 
 class AdPlugin;
 
@@ -48,6 +48,7 @@ public:
 	static AdServer *get_singleton();
 
 	void register_ad_plugin(String p_name, Ref<AdPlugin> p_plugin);
+	Ref<AdPlugin> get_plugin_raw(String p_name);
 
 	Array get_available_plugins() const;
 

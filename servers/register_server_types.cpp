@@ -65,9 +65,9 @@
 #include "physics_2d_server.h"
 #include "physics_server.h"
 #include "scene/debugger/script_debugger_remote.h"
+#include "servers/ramatak/ad_server.h"
 #include "visual/shader_types.h"
 #include "visual_server.h"
-#include "servers/ramatak/ad_server.h"
 
 static void _debugger_get_resource_usage(List<ScriptDebuggerRemote::ResourceUsage> *r_usage) {
 	List<VS::TextureInfo> tinfo;
@@ -212,7 +212,6 @@ void unregister_server_types() {
 }
 
 void register_server_singletons() {
-	Engine::get_singleton()->add_singleton(Engine::Singleton("AdServer", AdServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("VisualServer", VisualServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("AudioServer", AudioServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer", PhysicsServer::get_singleton()));
@@ -221,4 +220,5 @@ void register_server_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Navigation2DServer", Navigation2DServer::get_singleton_mut()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("ARVRServer", ARVRServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("CameraServer", CameraServer::get_singleton()));
+	Engine::get_singleton()->add_singleton(Engine::Singleton("AdServer", AdServer::get_singleton()));
 }

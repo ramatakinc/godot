@@ -17,7 +17,7 @@ class RamatakSettingsAdUnitEditor : public Control {
 
 	GridContainer *grid_container;
 
-	OptionButton* ad_unit_type_option_button;
+	OptionButton *ad_unit_type_option_button;
 	List<String> plugins;
 	List<Label *> labels;
 	List<LineEdit *> edits;
@@ -40,40 +40,92 @@ public:
 	String get_ad_unit() const;
 };
 
-class RamatakSettingsEditor : public Control {
-	GDCLASS(RamatakSettingsEditor, Control);
-
-	Dictionary ad_units_config;
+class RamatakSettingsAdUnitSetEditor : public Control {
+	GDCLASS(RamatakSettingsAdUnitSetEditor, Control);
 
 	VBoxContainer *main_vbox = nullptr;
 	HBoxContainer *add_hbox = nullptr;
 	HBoxContainer *edit_hbox = nullptr;
-	HBoxContainer *save_row_hbox = nullptr;
 
 	Label *add_label = nullptr;
 	LineEdit *add_edit = nullptr;
 	Button *add_button = nullptr;
+	Button *remove_button = nullptr;
 
 	ItemList *edit_items_list = nullptr;
 	RamatakSettingsAdUnitEditor *ad_unit_editor = nullptr;
-
-	Button *save_button = nullptr;
-	Button *revert_button = nullptr;
 
 	void _add_edit_text_changed(const String &p_text);
 	void _edit_items_list_item_selected(int p_index);
 	void _ad_unit_edited();
 	void _add_ad_unit();
-	void _revert();
+	void _remove_ad_unit();
 	void _save();
+
+	friend class RamatakSettingsEditor;
+
+protected:
+	static void
+	_bind_methods();
+	void _notification(int p_what);
+
+public:
+	RamatakSettingsAdUnitSetEditor();
+};
+
+class RamatakAdPluginSettingsEditor : public Control {
+	GDCLASS(RamatakAdPluginSettingsEditor, Control);
+
+	String plugin_id;
+	Array plugin_keys;
+
+	VBoxContainer *main_vbox = nullptr;
+
+	GridContainer *grid_container;
+
+	OptionButton *ad_unit_type_option_button;
+	List<Label *> labels;
+	List<LineEdit *> edits;
+
+	void _edit_items_list_item_selected(int p_index);
+	void _setting_edited(Variant p_arg);
+
+protected:
+	static void _bind_methods();
+
+	void clear();
+
+public:
+	void set_plugin(const String &p_plugin);
+
+	RamatakAdPluginSettingsEditor();
+};
+
+class RamatakSettingsEditor : public Control {
+	GDCLASS(RamatakSettingsEditor, Control);
+
+	Array plugins;
+
+	HBoxContainer *main_hbox = nullptr;
+	ItemList *edit_items_list = nullptr;
+	RamatakSettingsAdUnitSetEditor *ad_unit_set_editor = nullptr;
+	RamatakAdPluginSettingsEditor *ad_plugin_settings_editor = nullptr;
+
+	Control *current_pane = nullptr;
+
+	void _edit_items_list_item_selected(int p_index);
 
 protected:
 	static void _bind_methods();
 	void _notification(int p_what);
 
+	enum ItemListMetadataKeys {
+		AD_UNITS,
+		PLUGIN_PRIORITIES,
+	};
+
 public:
 	RamatakSettingsEditor();
-	// virtual ~RamatakSettingsEditor();
 };
 
 #endif
