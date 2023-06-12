@@ -101,6 +101,39 @@ public:
 	RamatakAdPluginSettingsEditor();
 };
 
+class RamatakAdPluginPriorityEditor : public Control {
+	GDCLASS(RamatakAdPluginPriorityEditor, Control);
+
+	HBoxContainer *main_hbox = nullptr;
+
+	ItemList *disabled_plugins_list = nullptr;
+	ItemList *enabled_plugins_list = nullptr;
+
+	VBoxContainer *button_row = nullptr;
+	Button *increase_prioity = nullptr;
+	Button *decrease_prioity = nullptr;
+	Button *enable_plugin = nullptr;
+	Button *disable_plugin = nullptr;
+
+	int get_selected_index(ItemList *p_list);
+
+	void persist_settings();
+
+protected:
+	static void _bind_methods();
+
+	void _increase_selected_priority();
+	void _decrease_selected_priority();
+
+	void _enable_selected_plugin();
+	void _disable_selected_plugin();
+
+public:
+	void set_platform(const String &p_platform);
+
+	RamatakAdPluginPriorityEditor();
+};
+
 class RamatakSettingsEditor : public Control {
 	GDCLASS(RamatakSettingsEditor, Control);
 
@@ -109,6 +142,7 @@ class RamatakSettingsEditor : public Control {
 	HBoxContainer *main_hbox = nullptr;
 	ItemList *edit_items_list = nullptr;
 	RamatakSettingsAdUnitSetEditor *ad_unit_set_editor = nullptr;
+	RamatakAdPluginPriorityEditor *ad_priority_editor = nullptr;
 	RamatakAdPluginSettingsEditor *ad_plugin_settings_editor = nullptr;
 
 	Control *current_pane = nullptr;

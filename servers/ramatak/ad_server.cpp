@@ -63,6 +63,7 @@ Array AdServer::get_plugin_priority_order() const {
 
 void AdServer::set_plugin_priority_order(Array p_priorites) {
 	ProjectSettings::get_singleton()->set("ramatak/monetization/ad_plugin_priorities", p_priorites);
+	ProjectSettings::get_singleton()->save();
 }
 
 Dictionary AdServer::get_plugin_config(String p_plugin) const {

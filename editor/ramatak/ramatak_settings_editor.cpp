@@ -259,7 +259,7 @@ RamatakSettingsAdUnitSetEditor::RamatakSettingsAdUnitSetEditor() {
 
 	edit_items_list = memnew(ItemList);
 	edit_items_list->set_custom_minimum_size(Size2(200, 0));
-	edit_items_list->connect("item_selected", this, "_edit_items_list_item_selected");
+	edit_items_list->connect("item_selected", this, "_edit_items_list_item_selected", Vector<Variant>(), CONNECT_DEFERRED);
 	edit_hbox->add_child(edit_items_list);
 
 	ad_unit_editor = memnew(RamatakSettingsAdUnitEditor);
@@ -356,6 +356,154 @@ void RamatakAdPluginSettingsEditor::clear() {
 	}
 }
 
+RamatakAdPluginPriorityEditor::RamatakAdPluginPriorityEditor() {
+	main_hbox = memnew(HBoxContainer);
+	main_hbox->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
+	add_child(main_hbox);
+
+	VBoxContainer *disabled_plugins_vbox = memnew(VBoxContainer);
+	disabled_plugins_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	disabled_plugins_vbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	disabled_plugins_list = memnew(ItemList);
+	disabled_plugins_list->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	disabled_plugins_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+
+	Label *disabled_plugins_label = memnew(Label);
+	disabled_plugins_label->set_text("Disabled plugins");
+
+	disabled_plugins_vbox->add_child(disabled_plugins_label);
+	disabled_plugins_vbox->add_child(disabled_plugins_list);
+	main_hbox->add_child(disabled_plugins_vbox);
+
+	VBoxContainer *enabled_plugins_vbox = memnew(VBoxContainer);
+	enabled_plugins_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	enabled_plugins_vbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	enabled_plugins_list = memnew(ItemList);
+	enabled_plugins_list->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	enabled_plugins_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+
+	Label *enabled_plugins_label = memnew(Label);
+	enabled_plugins_label->set_text("Enabled plugins");
+
+	enabled_plugins_vbox->add_child(enabled_plugins_label);
+	enabled_plugins_vbox->add_child(enabled_plugins_list);
+	main_hbox->add_child(enabled_plugins_vbox);
+
+	Array all_plugins = AdServer::get_singleton()->get_available_plugins();
+	Array priority_order = AdServer::get_singleton()->get_plugin_priority_order();
+	for (int i = 0; i < priority_order.size(); i++) {
+		enabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(priority_order[i])->get_friendly_name());
+		enabled_plugins_list->set_item_metadata(i, (String)priority_order[i]);
+	}
+	for (int i = 0; i < all_plugins.size(); i++) {
+		if (priority_order.find(all_plugins[i]) == -1) {
+			disabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(all_plugins[i])->get_friendly_name());
+			disabled_plugins_list->set_item_metadata(disabled_plugins_list->get_item_count() - 1, (String)all_plugins[i]);
+		}
+	}
+
+	button_row = memnew(VBoxContainer);
+	main_hbox->add_child(button_row);
+
+	increase_prioity = memnew(Button);
+	increase_prioity->set_text("Increase priority");
+	increase_prioity->connect("pressed", this, "_increase_selected_priority");
+	button_row->add_child(increase_prioity);
+
+	decrease_prioity = memnew(Button);
+	decrease_prioity->set_text("Decrease priority");
+	decrease_prioity->connect("pressed", this, "_decrease_selected_priority");
+	button_row->add_child(decrease_prioity);
+
+	enable_plugin = memnew(Button);
+	enable_plugin->set_text("Enable plugin");
+	enable_plugin->connect("pressed", this, "_enable_selected_plugin");
+	button_row->add_child(enable_plugin);
+
+	disable_plugin = memnew(Button);
+	disable_plugin->set_text("Disable plugin");
+	disable_plugin->connect("pressed", this, "_disable_selected_plugin");
+	button_row->add_child(disable_plugin);
+}
+
+void RamatakAdPluginPriorityEditor::_bind_methods() {
+	ClassDB::bind_method("_increase_selected_priority", &RamatakAdPluginPriorityEditor::_increase_selected_priority);
+	ClassDB::bind_method("_decrease_selected_priority", &RamatakAdPluginPriorityEditor::_decrease_selected_priority);
+	ClassDB::bind_method("_enable_selected_plugin", &RamatakAdPluginPriorityEditor::_enable_selected_plugin);
+	ClassDB::bind_method("_disable_selected_plugin", &RamatakAdPluginPriorityEditor::_disable_selected_plugin);
+}
+
+int RamatakAdPluginPriorityEditor::get_selected_index(ItemList *p_list) {
+	Vector<int> selected = p_list->get_selected_items();
+	enabled_plugins_list->unselect_all();
+	if (selected.size() > 1) {
+		WARN_PRINT_ONCE("Multi-select is not enabled but multiple items are selected");
+		return -1;
+	} else if (selected.empty()) {
+		return -1;
+	}
+	return selected[0];
+}
+
+void RamatakAdPluginPriorityEditor::persist_settings() {
+	Array priorities;
+	for (int i = 0; i < enabled_plugins_list->get_item_count(); i++) {
+		String id = enabled_plugins_list->get_item_metadata(i);
+		priorities.push_back(id);
+	}
+	AdServer::get_singleton()->set_plugin_priority_order(priorities);
+}
+
+void RamatakAdPluginPriorityEditor::_increase_selected_priority() {
+	int selected_index = get_selected_index(enabled_plugins_list);
+	if (selected_index == -1) {
+		return;
+	}
+	if (selected_index == 0) {
+		return; // Can't move it up any more.
+	}
+	enabled_plugins_list->move_item(selected_index, selected_index - 1);
+	enabled_plugins_list->select(selected_index - 1);
+	persist_settings();
+}
+
+void RamatakAdPluginPriorityEditor::_decrease_selected_priority() {
+	int selected_index = get_selected_index(enabled_plugins_list);
+	if (selected_index == -1) {
+		return;
+	}
+	if (selected_index == enabled_plugins_list->get_item_count() - 1) {
+		return; // Can't move it down any more.
+	}
+	enabled_plugins_list->move_item(selected_index, selected_index + 1);
+	enabled_plugins_list->select(selected_index + 1);
+	persist_settings();
+}
+
+void RamatakAdPluginPriorityEditor::_enable_selected_plugin() {
+	int selected_index = get_selected_index(disabled_plugins_list);
+	if (selected_index == -1) {
+		return;
+	}
+	String plugin_id = disabled_plugins_list->get_item_metadata(selected_index);
+	disabled_plugins_list->remove_item(selected_index);
+	enabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(plugin_id)->get_friendly_name());
+	enabled_plugins_list->set_item_metadata(enabled_plugins_list->get_item_count() - 1, plugin_id);
+	persist_settings();
+}
+
+void RamatakAdPluginPriorityEditor::_disable_selected_plugin() {
+	int selected_index = get_selected_index(enabled_plugins_list);
+	if (selected_index == -1) {
+		return;
+	}
+	String plugin_id = enabled_plugins_list->get_item_metadata(selected_index);
+	enabled_plugins_list->remove_item(selected_index);
+	disabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(plugin_id)->get_friendly_name());
+	disabled_plugins_list->set_item_metadata(disabled_plugins_list->get_item_count() - 1, plugin_id);
+	persist_settings();
+}
+
 RamatakSettingsEditor::RamatakSettingsEditor() {
 	ad_plugin_settings_editor = memnew(RamatakAdPluginSettingsEditor);
 	ad_plugin_settings_editor->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
@@ -364,6 +512,10 @@ RamatakSettingsEditor::RamatakSettingsEditor() {
 	ad_unit_set_editor = memnew(RamatakSettingsAdUnitSetEditor);
 	ad_unit_set_editor->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
 	ad_unit_set_editor->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+
+	ad_priority_editor = memnew(RamatakAdPluginPriorityEditor);
+	ad_priority_editor->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
+	ad_priority_editor->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 
 	main_hbox = memnew(HBoxContainer);
 	main_hbox->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
@@ -417,7 +569,8 @@ void RamatakSettingsEditor::_edit_items_list_item_selected(int p_index) {
 		if (current_pane) {
 			main_hbox->remove_child(current_pane);
 		}
-		current_pane = nullptr;
+		current_pane = this->ad_priority_editor;
+		main_hbox->add_child(current_pane);
 	} else {
 		if (current_pane) {
 			main_hbox->remove_child(current_pane);
