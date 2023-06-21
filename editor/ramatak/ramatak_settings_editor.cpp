@@ -215,7 +215,6 @@ void RamatakSettingsAdUnitSetEditor::_ad_unit_edited() {
 	if (ad_unit_editor->get_ad_unit() != "") {
 		ad_units_config[ad_unit_editor->get_ad_unit()] = current_ad_unit_config;
 		ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", ad_units_config);
-		WARN_PRINT("EDITING");
 		call_deferred("_save");
 	}
 }
@@ -389,19 +388,6 @@ RamatakAdPluginPriorityEditor::RamatakAdPluginPriorityEditor() {
 	enabled_plugins_vbox->add_child(enabled_plugins_list);
 	main_hbox->add_child(enabled_plugins_vbox);
 
-	Array all_plugins = AdServer::get_singleton()->get_available_plugins();
-	Array priority_order = AdServer::get_singleton()->get_plugin_priority_order();
-	for (int i = 0; i < priority_order.size(); i++) {
-		enabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(priority_order[i])->get_friendly_name());
-		enabled_plugins_list->set_item_metadata(i, (String)priority_order[i]);
-	}
-	for (int i = 0; i < all_plugins.size(); i++) {
-		if (priority_order.find(all_plugins[i]) == -1) {
-			disabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(all_plugins[i])->get_friendly_name());
-			disabled_plugins_list->set_item_metadata(disabled_plugins_list->get_item_count() - 1, (String)all_plugins[i]);
-		}
-	}
-
 	button_row = memnew(VBoxContainer);
 	main_hbox->add_child(button_row);
 
@@ -424,6 +410,23 @@ RamatakAdPluginPriorityEditor::RamatakAdPluginPriorityEditor() {
 	disable_plugin->set_text("Disable plugin");
 	disable_plugin->connect("pressed", this, "_disable_selected_plugin");
 	button_row->add_child(disable_plugin);
+}
+
+void RamatakAdPluginPriorityEditor::_notification(int p_what) {
+	if (p_what == NOTIFICATION_READY) {
+		Array all_plugins = AdServer::get_singleton()->get_available_plugins();
+		Array priority_order = AdServer::get_singleton()->get_plugin_priority_order();
+		for (int i = 0; i < priority_order.size(); i++) {
+			enabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(priority_order[i])->get_friendly_name());
+			enabled_plugins_list->set_item_metadata(i, (String)priority_order[i]);
+		}
+		for (int i = 0; i < all_plugins.size(); i++) {
+			if (priority_order.find(all_plugins[i]) == -1) {
+				disabled_plugins_list->add_item(AdServer::get_singleton()->get_plugin_raw(all_plugins[i])->get_friendly_name());
+				disabled_plugins_list->set_item_metadata(disabled_plugins_list->get_item_count() - 1, (String)all_plugins[i]);
+			}
+		}
+	}
 }
 
 void RamatakAdPluginPriorityEditor::_bind_methods() {
@@ -530,21 +533,6 @@ RamatakSettingsEditor::RamatakSettingsEditor() {
 	edit_items_list->add_item("Plugin priorities");
 	edit_items_list->set_item_metadata(edit_items_list->get_item_count() - 1, (Variant)PLUGIN_PRIORITIES);
 
-	plugins = AdServer::get_singleton()->get_available_plugins();
-	for (int i = 0; i < plugins.size(); i++) {
-		if (i == 0) {
-			ad_unit_set_editor->remove_button->set_disabled(false);
-		}
-		Ref<AdPlugin> plugin = AdServer::get_singleton()->get_plugin_raw(plugins[i]);
-		Array key_tooltip_pairs = plugin->get_config_key_tooltip_pairs();
-		if (key_tooltip_pairs.empty()) {
-			continue;
-		}
-		edit_items_list->add_item(vformat("%s options", plugin->get_friendly_name()));
-		// Use the non-friendly name as metadata.
-		edit_items_list->set_item_metadata(edit_items_list->get_item_count() - 1, plugins[i]);
-	}
-	edit_items_list->select(0);
 	edit_items_list->connect("item_selected", this, "_edit_items_list_item_selected");
 	main_hbox->add_child(edit_items_list);
 
@@ -585,4 +573,21 @@ void RamatakSettingsEditor::_edit_items_list_item_selected(int p_index) {
 }
 
 void RamatakSettingsEditor::_notification(int p_what) {
+	if (p_what == NOTIFICATION_READY) {
+		plugins = AdServer::get_singleton()->get_available_plugins();
+		for (int i = 0; i < plugins.size(); i++) {
+			if (i == 0) {
+				ad_unit_set_editor->remove_button->set_disabled(false);
+			}
+			Ref<AdPlugin> plugin = AdServer::get_singleton()->get_plugin_raw(plugins[i]);
+			Array key_tooltip_pairs = plugin->get_config_key_tooltip_pairs();
+			if (key_tooltip_pairs.empty()) {
+				continue;
+			}
+			edit_items_list->add_item(vformat("%s options", plugin->get_friendly_name()));
+			// Use the non-friendly name as metadata.
+			edit_items_list->set_item_metadata(edit_items_list->get_item_count() - 1, plugins[i]);
+		}
+		edit_items_list->select(0);
+	}
 }

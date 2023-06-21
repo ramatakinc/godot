@@ -47,6 +47,8 @@ protected:
 public:
 	static AdServer *get_singleton();
 
+	void initialize_modules();
+
 	void register_ad_plugin(String p_name, Ref<AdPlugin> p_plugin);
 	Ref<AdPlugin> get_plugin_raw(String p_name);
 

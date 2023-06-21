@@ -122,6 +122,8 @@ class RamatakAdPluginPriorityEditor : public Control {
 protected:
 	static void _bind_methods();
 
+	void _notification(int p_what);
+
 	void _increase_selected_priority();
 	void _decrease_selected_priority();
 

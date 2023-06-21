@@ -38,11 +38,34 @@ void AdServer::_bind_methods() {
 }
 
 void AdServer::register_ad_plugin(String p_name, Ref<AdPlugin> p_plugin) {
-	p_plugin->init_plugin();
 	if (!this->ad_plugins.has(p_name)) {
 		this->ad_plugin_list.push_back(p_name);
 	}
 	this->ad_plugins[p_name] = p_plugin;
+}
+
+void AdServer::initialize_modules() {
+	for (int i = 0; i < ad_plugin_list.size(); i++) {
+		String plugin_name = ad_plugin_list[i];
+		Ref<AdPlugin> plugin = this->ad_plugins[plugin_name];
+		if (plugin.is_null()) {
+			WARN_PRINT_ONCE(vformat("Plugin is null during initialization: %s", plugin_name));
+			continue;
+		}
+		AdPlugin::AdPluginResult result = plugin->init_plugin();
+		switch (result) {
+			case AdPlugin::AdPluginResult::OK:
+				break;
+			case AdPlugin::AdPluginResult::PLUGIN_NOT_ENABLED_WARN:
+				WARN_PRINT(vformat("Plugin not enabled, but requested: %s", plugin_name));
+				return;
+			case AdPlugin::AdPluginResult::AUTH_ERROR:
+			case AdPlugin::AdPluginResult::NETWORK_ERROR:
+			case AdPlugin::AdPluginResult::UNSPECIFIED_ERROR:
+				WARN_PRINT(vformat("Plugin initialization failed: %s", plugin_name));
+				break;
+		}
+	}
 }
 
 AdServer *AdServer::get_singleton() {
@@ -118,6 +141,7 @@ Variant AdServer::show_banner(String p_ad_unit, BannerAdSize p_size, BannerAdLoc
 	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
 		if (network_specific_id.length() > 0) {
+			WARN_PRINT_ONCE(ad_plugin_priorities[i]);
 			// Plugin `i` can handle the specified ad_unit.
 			Variant request_token = rand.rand() & 0x7FFFFFFF;
 			ad_plugins[ad_plugin_priorities[i]]->show_banner(network_specific_id, request_token, size, location);

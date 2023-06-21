@@ -1579,6 +1579,9 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 
 	register_driver_types();
 
+	// Must happen after register_module_types()
+	AdServer::get_singleton()->initialize_modules();
+
 	// This loads global classes, so it must happen before custom loaders and savers are registered
 	ScriptServer::init_languages();
 

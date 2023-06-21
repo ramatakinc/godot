@@ -15,6 +15,7 @@ protected:
 public:
 	enum AdPluginResult {
 		OK,
+		PLUGIN_NOT_ENABLED_WARN,
 		AUTH_ERROR,
 		NETWORK_ERROR,
 		UNSPECIFIED_ERROR,

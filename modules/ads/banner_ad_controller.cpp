@@ -1,6 +1,6 @@
 #include "banner_ad_controller.h"
-#include "servers/ramatak/ad_server.h"
 #include "core/engine.h"
+#include "servers/ramatak/ad_server.h"
 
 void BannerAdController::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_auto_show", "auto_show"), &BannerAdController::set_auto_show);
