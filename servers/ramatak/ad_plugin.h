@@ -34,6 +34,8 @@ public:
 
 	virtual Array get_shown_ad_units() = 0;
 	// virtual Rect2i get_safe_zone() = 0;
+
+	virtual String get_android_plugin_config() = 0;
 };
 
 VARIANT_ENUM_CAST(AdPlugin::AdPluginResult);

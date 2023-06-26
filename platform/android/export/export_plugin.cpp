@@ -610,9 +610,6 @@ Vector<PluginConfigAndroid> EditorExportPlatformAndroid::get_plugins() {
 
 	String plugins_dir = ProjectSettings::get_singleton()->get_resource_path().plus_file("android/plugins");
 
-	// Add the prebuilt plugins
-	loaded_plugins.append_array(PluginConfigAndroid::get_prebuilt_plugins(plugins_dir));
-
 	if (DirAccess::exists(plugins_dir)) {
 		Vector<String> plugins_filenames = list_gdap_files(plugins_dir);
 
@@ -634,6 +631,11 @@ Vector<PluginConfigAndroid> EditorExportPlatformAndroid::get_plugins() {
 
 Vector<PluginConfigAndroid> EditorExportPlatformAndroid::get_enabled_plugins(const Ref<EditorExportPreset> &p_presets) {
 	Vector<PluginConfigAndroid> enabled_plugins;
+
+	String plugins_dir = ProjectSettings::get_singleton()->get_resource_path().plus_file("android/plugins");
+	// Add the prebuilt plugins
+	enabled_plugins.append_array(PluginConfigAndroid::get_prebuilt_plugins(plugins_dir));
+
 	Vector<PluginConfigAndroid> all_plugins = get_plugins();
 	for (int i = 0; i < all_plugins.size(); i++) {
 		PluginConfigAndroid plugin = all_plugins[i];

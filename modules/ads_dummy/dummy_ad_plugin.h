@@ -24,6 +24,8 @@ public:
 
 	virtual Array get_shown_ad_units();
 
+	virtual String get_android_plugin_config();
+
 	DummyAdPlugin();
 	virtual ~DummyAdPlugin();
 };

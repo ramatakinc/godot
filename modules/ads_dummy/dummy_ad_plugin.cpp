@@ -62,5 +62,9 @@ String DummyAdPlugin::get_friendly_name() {
 	return "Dummy";
 }
 
+String DummyAdPlugin::get_android_plugin_config() {
+	return "";
+}
+
 DummyAdPlugin::DummyAdPlugin() {}
 DummyAdPlugin::~DummyAdPlugin() {}
