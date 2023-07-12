@@ -142,7 +142,7 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 	void _get_permissions(const Ref<EditorExportPreset> &p_preset, bool p_give_internet, Vector<String> &r_permissions);
 
-	void _write_tmp_manifest(const Ref<EditorExportPreset> &p_preset, bool p_give_internet, bool p_debug);
+	void _write_tmp_manifest(const Ref<EditorExportPreset> &p_preset, bool p_give_internet, bool p_debug, const String &p_template_path);
 
 	void _fix_manifest(const Ref<EditorExportPreset> &p_preset, Vector<uint8_t> &p_manifest, bool p_give_internet);
 
@@ -158,9 +158,9 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 
 	void load_icon_refs(const Ref<EditorExportPreset> &p_preset, Ref<Image> &icon, Ref<Image> &foreground, Ref<Image> &background);
 
-	void store_image(const LauncherIcon launcher_icon, const Vector<uint8_t> &data);
+	void store_image(const LauncherIcon launcher_icon, const Vector<uint8_t> &data, const String &p_template_path);
 
-	void store_image(const String &export_path, const Vector<uint8_t> &data);
+	void store_image(const String &export_path, const Vector<uint8_t> &data, const String &p_template_path);
 
 	void _copy_icons_to_gradle_project(const Ref<EditorExportPreset> &p_preset,
 			const String &processed_splash_config_xml,
@@ -168,9 +168,12 @@ class EditorExportPlatformAndroid : public EditorExportPlatform {
 			const Ref<Image> &splash_bg_color_image,
 			const Ref<Image> &main_image,
 			const Ref<Image> &foreground,
-			const Ref<Image> &background);
+			const Ref<Image> &background,
+			const String &p_template_path);
 
 	static Vector<String> get_enabled_abis(const Ref<EditorExportPreset> &p_preset);
+
+	static String get_template_path(const Ref<EditorExportPreset> &p_preset);
 
 public:
 	typedef Error (*EditorExportSaveFunction)(void *p_userdata, const String &p_path, const Vector<uint8_t> &p_data, int p_file, int p_total);
@@ -210,7 +213,7 @@ public:
 
 	virtual List<String> get_binary_extensions(const Ref<EditorExportPreset> &p_preset) const;
 
-	void _update_custom_build_project();
+	void _update_custom_build_project(const String &p_template_path);
 
 	inline bool is_clean_build_required(Vector<PluginConfigAndroid> enabled_plugins) {
 		String plugin_names = PluginConfigAndroid::get_plugins_names(enabled_plugins);
@@ -243,9 +246,9 @@ public:
 
 	Error sign_apk(const Ref<EditorExportPreset> &p_preset, bool p_debug, const String &export_path, EditorProgress &ep);
 
-	void _clear_assets_directory();
+	void _clear_assets_directory(const String &p_template_path);
 
-	void _remove_copied_libs();
+	void _remove_copied_libs(const String &p_template_path);
 
 	String join_list(List<String> parts, const String &separator) const;
 

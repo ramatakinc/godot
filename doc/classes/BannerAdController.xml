@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BannerAdController" inherits="AdController" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		Controls and configures banner ads
+	</brief_description>
+	<description>
+		BannerAdController is used to set up the size, location and status of a banner advertisement, and control its status.
+		It also includes signals inherited from AdController to monitor the status of a banner ad.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+	</methods>
+	<members>
+		<member name="auto_show" type="bool" setter="set_auto_show" getter="get_auto_show" default="false">
+			When auto-show is enabled, the banner advertisement will be displayed to the user when this node enters the scene.
+		</member>
+		<member name="location" type="int" setter="set_location" getter="get_location" enum="AdServer.BannerAdLocation" default="0">
+			The location on the screen to display this banner advertisement.
+		</member>
+		<member name="size" type="int" setter="set_size" getter="get_size" enum="AdServer.BannerAdSize" default="0">
+			The size of the advertisement.
+			This is internally converted to an appropriate value for each ad network to ensure uniform behavior across networks.
+		</member>
+	</members>
+	<constants>
+	</constants>
+</class>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AdController" inherits="Node" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		Controls and configures non-banner ads like interstitials
+	</brief_description>
+	<description>
+		AdController is used to set up, display, and monitor the status of an interstitial or rewarded interstitial advertisement.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="hide">
+			<return type="void" />
+			<description>
+				Hides this advertisement.
+			</description>
+		</method>
+		<method name="show">
+			<return type="void" />
+			<description>
+				Shows this advertisement.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="ad_unit" type="String" setter="set_ad_unit" getter="get_ad_unit" default="&quot;&quot;">
+			The ad unit associated with this advertisement.
+			This is used to provide the selected ad network with the information it needs to configure your advertisement and ensure revenue is appropriately handled.
+		</member>
+	</members>
+	<signals>
+		<signal name="ad_clicked">
+			<description>
+				Emitted whenever the advertisement is clicked.
+				Due to platform-specific quirks, this may not be emitted until after the user returns to the app.
+			</description>
+		</signal>
+		<signal name="ad_closed">
+			<description>
+				The user closed the ad.
+			</description>
+		</signal>
+		<signal name="ad_error">
+			<argument index="0" name="message" type="String" />
+			<description>
+				There was an error during the loading or display of this advertisement.
+				The message argument provides more information about the error.
+			</description>
+		</signal>
+		<signal name="ad_loaded">
+			<description>
+				The advertisement has loaded. This does not indicate that it has been shown to the user.
+			</description>
+		</signal>
+		<signal name="ad_reward_earned">
+			<description>
+				For rewarded interstitial ads, this signal indicates that the reward is earned.
+				Handling this signal is mandatory to comply with advertisement network guidelines.
+			</description>
+		</signal>
+		<signal name="ad_shown">
+			<description>
+				The advertisement has been displayed to the user.
+			</description>
+		</signal>
+	</signals>
+	<constants>
+	</constants>
+</class>

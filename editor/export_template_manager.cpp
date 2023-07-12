@@ -753,6 +753,106 @@ Error ExportTemplateManager::install_android_template_from_file(const String &p_
 	return OK;
 }
 
+Error ExportTemplateManager::install_android_template_from_file_to_path(const String &p_file, const String &p_path) {
+	// To support custom Android builds, we install the Java source code and buildsystem
+	// from android_source.zip to the project's user://android/VERSION folder.
+
+	DirAccess::create(DirAccess::ACCESS_FILESYSTEM)->make_dir_recursive(p_path.plus_file("build"));
+
+	DirAccessRef da = DirAccess::open(p_path);
+	ERR_FAIL_COND_V(!da, ERR_CANT_CREATE);
+
+	{
+		// Add version, to ensure building won't work if template and Godot version don't match.
+		FileAccessRef f = FileAccess::open(p_path.plus_file(".build_version"), FileAccess::WRITE);
+		ERR_FAIL_COND_V(!f, ERR_CANT_CREATE);
+		f->store_line(VERSION_FULL_CONFIG);
+		f->close();
+	}
+
+	// Create the android plugins directory.
+	Error err = da->make_dir_recursive("plugins");
+	ERR_FAIL_COND_V(err != OK, err);
+
+	err = da->make_dir_recursive("build");
+	ERR_FAIL_COND_V(err != OK, err);
+	{
+		// Add an empty .gdignore file to avoid scan.
+		FileAccessRef f = FileAccess::open(p_path.plus_file("build/.gdignore"), FileAccess::WRITE);
+		ERR_FAIL_COND_V(!f, ERR_CANT_CREATE);
+		f->store_line("");
+		f->close();
+	}
+
+	// Uncompress source template.
+
+	FileAccess *src_f = nullptr;
+	zlib_filefunc_def io = zipio_create_io_from_file(&src_f);
+
+	unzFile pkg = unzOpen2(p_file.utf8().get_data(), &io);
+	ERR_FAIL_COND_V_MSG(!pkg, ERR_CANT_OPEN, "Android sources not in ZIP format.");
+
+	int ret = unzGoToFirstFile(pkg);
+	int total_files = 0;
+	// Count files to unzip.
+	while (ret == UNZ_OK) {
+		total_files++;
+		ret = unzGoToNextFile(pkg);
+	}
+	ret = unzGoToFirstFile(pkg);
+
+	ProgressDialog::get_singleton()->add_task("uncompress_src", TTR("Uncompressing Android Build Sources"), total_files);
+
+	Set<String> dirs_tested;
+	int idx = 0;
+	while (ret == UNZ_OK) {
+		// Get file path.
+		unz_file_info info;
+		char fpath[16384];
+		ret = unzGetCurrentFileInfo(pkg, &info, fpath, 16384, nullptr, 0, nullptr, 0);
+
+		String path = String::utf8(fpath);
+		String base_dir = path.get_base_dir();
+
+		if (!path.ends_with("/")) {
+			Vector<uint8_t> data;
+			data.resize(info.uncompressed_size);
+
+			// Read.
+			unzOpenCurrentFile(pkg);
+			unzReadCurrentFile(pkg, data.ptrw(), data.size());
+			unzCloseCurrentFile(pkg);
+
+			if (!dirs_tested.has(base_dir)) {
+				da->make_dir_recursive(String("build").plus_file(base_dir));
+				dirs_tested.insert(base_dir);
+			}
+
+			String to_write = String(p_path.plus_file("build")).plus_file(path);
+			FileAccess *f = FileAccess::open(to_write, FileAccess::WRITE);
+			if (f) {
+				f->store_buffer(data.ptr(), data.size());
+				memdelete(f);
+#ifndef WINDOWS_ENABLED
+				FileAccess::set_unix_permissions(to_write, (info.external_fa >> 16) & 0x01FF);
+#endif
+			} else {
+				ERR_PRINT("Can't uncompress file: " + to_write);
+			}
+		}
+
+		ProgressDialog::get_singleton()->task_step("uncompress_src", path, idx);
+
+		idx++;
+		ret = unzGoToNextFile(pkg);
+	}
+
+	ProgressDialog::get_singleton()->end_task("uncompress_src");
+	unzClose(pkg);
+
+	return OK;
+}
+
 void ExportTemplateManager::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE:

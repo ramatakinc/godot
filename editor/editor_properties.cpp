@@ -36,6 +36,7 @@
 #include "editor_properties_array_dict.h"
 #include "editor_scale.h"
 #include "scene/main/viewport.h"
+#include "editor/ramatak/editor_property_ad_unit.h"
 
 ///////////////////// NULL /////////////////////////
 
@@ -2873,6 +2874,10 @@ bool EditorInspectorDefaultPlugin::parse_property(Object *p_object, Variant::Typ
 				EditorPropertyTextEnum *editor = memnew(EditorPropertyTextEnum);
 				Vector<String> options = p_hint_text.split(",", false);
 				editor->setup(options, (p_hint == PROPERTY_HINT_ENUM_SUGGESTION));
+				add_property_editor(p_path, editor);
+			} else if (p_hint == PROPERTY_HINT_AD_UNIT) {
+				EditorPropertyAdUnit *editor = memnew(EditorPropertyAdUnit);
+				editor->setup();
 				add_property_editor(p_path, editor);
 			} else if (p_hint == PROPERTY_HINT_MULTILINE_TEXT) {
 				EditorPropertyMultilineText *editor = memnew(EditorPropertyMultilineText);
