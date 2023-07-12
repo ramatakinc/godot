@@ -110,6 +110,7 @@ if env["tools"]:
     SConscript("icons/SCsub")
     SConscript("import/SCsub")
     SConscript("plugins/SCsub")
+    SConscript("ramatak/SCsub")
 
     lib = env.add_library("editor", env.editor_sources)
     env.Prepend(LIBS=[lib])

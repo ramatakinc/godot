@@ -69,6 +69,7 @@
 #include "servers/navigation_server.h"
 #include "servers/physics_2d_server.h"
 #include "servers/physics_server.h"
+#include "servers/ramatak/ad_server.h"
 #include "servers/register_server_types.h"
 #include "servers/visual_server_callbacks.h"
 
@@ -110,6 +111,7 @@ static ScriptDebugger *script_debugger = nullptr;
 static MessageQueue *message_queue = nullptr;
 
 // Initialized in setup2()
+static AdServer *ad_server = nullptr;
 static AudioServer *audio_server = nullptr;
 static CameraServer *camera_server = nullptr;
 static ARVRServer *arvr_server = nullptr;
@@ -419,6 +421,7 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 			String("Please include this when reporting the bug to the project developer."));
 	GLOBAL_DEF("debug/settings/crash_handler/message.editor",
 			String("Please include this when reporting the bug on: https://github.com/godotengine/godot/issues"));
+	ad_server = memnew(AdServer);
 
 	MAIN_PRINT("Main: Parse CMDLine");
 
@@ -1575,6 +1578,9 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 	register_server_singletons();
 
 	register_driver_types();
+
+	// Must happen after register_module_types()
+	AdServer::get_singleton()->initialize_modules();
 
 	// This loads global classes, so it must happen before custom loaders and savers are registered
 	ScriptServer::init_languages();

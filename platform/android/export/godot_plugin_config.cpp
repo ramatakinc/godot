@@ -29,6 +29,9 @@
 /*************************************************************************/
 
 #include "godot_plugin_config.h"
+#include "core/os/os.h"
+#include "servers/ramatak/ad_plugin.h"
+#include "servers/ramatak/ad_server.h"
 
 const char *PluginConfigAndroid::PLUGIN_CONFIG_EXT = ".gdap";
 
@@ -89,6 +92,24 @@ PluginConfigAndroid PluginConfigAndroid::resolve_prebuilt_plugin(PluginConfigAnd
 
 Vector<PluginConfigAndroid> PluginConfigAndroid::get_prebuilt_plugins(String plugins_base_dir) {
 	Vector<PluginConfigAndroid> prebuilt_plugins;
+	Array plugin_keys = AdServer::get_singleton()->get_plugin_priority_order();
+	for (int plugin_idx = 0; plugin_idx < plugin_keys.size(); plugin_idx++) {
+		Ref<ConfigFile> config;
+		config.instance();
+		String config_string = AdServer::get_singleton()->get_plugin_raw(plugin_keys[plugin_idx])->get_android_plugin_config();
+		Error err = config->parse(config_string);
+		if (err == Error::OK) {
+			PluginConfigAndroid android_config = PluginConfigAndroid::parse_plugin_config(config, OS::get_singleton()->get_executable_path().get_base_dir());
+			if (!android_config.valid_config) {
+				WARN_PRINT_ONCE(vformat("Invalid plugin config: %s", plugin_keys[plugin_idx]));
+			} else {
+				prebuilt_plugins.push_back(android_config);
+			}
+		} else if (config_string.length() != 0) {
+			WARN_PRINT_ONCE(vformat("Error parsing plugin config: %s", plugin_keys[plugin_idx]));
+		}
+	}
+
 	return prebuilt_plugins;
 }
 
@@ -159,6 +180,33 @@ PluginConfigAndroid PluginConfigAndroid::load_plugin_config(Ref<ConfigFile> conf
 		}
 	}
 
+	return plugin_config;
+}
+
+PluginConfigAndroid PluginConfigAndroid::parse_plugin_config(Ref<ConfigFile> config_file, const String &base_path) {
+	PluginConfigAndroid plugin_config = {};
+
+	ERR_FAIL_COND_V_MSG(config_file.is_null(), plugin_config, "Config file cannot be null");
+
+	plugin_config.name = config_file->get_value(PluginConfigAndroid::CONFIG_SECTION, PluginConfigAndroid::CONFIG_NAME_KEY, String());
+	plugin_config.binary_type = config_file->get_value(PluginConfigAndroid::CONFIG_SECTION, PluginConfigAndroid::CONFIG_BINARY_TYPE_KEY, String());
+
+	String binary_path = config_file->get_value(PluginConfigAndroid::CONFIG_SECTION, PluginConfigAndroid::CONFIG_BINARY_KEY, String());
+	plugin_config.binary = plugin_config.binary_type == PluginConfigAndroid::BINARY_TYPE_LOCAL ? resolve_local_dependency_path(base_path, binary_path) : binary_path;
+
+	if (config_file->has_section(PluginConfigAndroid::DEPENDENCIES_SECTION)) {
+		Vector<String> local_dependencies_paths = config_file->get_value(PluginConfigAndroid::DEPENDENCIES_SECTION, PluginConfigAndroid::DEPENDENCIES_LOCAL_KEY, Vector<String>());
+		if (!local_dependencies_paths.empty()) {
+			for (int i = 0; i < local_dependencies_paths.size(); i++) {
+				plugin_config.local_dependencies.push_back(resolve_local_dependency_path(base_path, local_dependencies_paths[i]));
+			}
+		}
+
+		plugin_config.remote_dependencies = config_file->get_value(PluginConfigAndroid::DEPENDENCIES_SECTION, PluginConfigAndroid::DEPENDENCIES_REMOTE_KEY, Vector<String>());
+		plugin_config.custom_maven_repos = config_file->get_value(PluginConfigAndroid::DEPENDENCIES_SECTION, PluginConfigAndroid::DEPENDENCIES_CUSTOM_MAVEN_REPOS_KEY, Vector<String>());
+	}
+
+	plugin_config.valid_config = is_plugin_config_valid(plugin_config);
 	return plugin_config;
 }
 

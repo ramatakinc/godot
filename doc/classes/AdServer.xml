@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AdServer" inherits="Object" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+		The AdServer is a low-level interface with the Ramtak Mobile Studio advertisement system.
+	</brief_description>
+	<description>
+		While it is possible to use AdServer as a user, it's much more ergonomic to use the AdController and BannerAdController nodes.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_available_plugins" qualifiers="const">
+			<return type="Array" />
+			<description>
+				Regurns a list of available plugins in the current build.
+			</description>
+		</method>
+		<method name="get_plugin_priority_order" qualifiers="const">
+			<return type="Array" />
+			<description>
+				Returns the current priority order of advertisement plugins.
+			</description>
+		</method>
+		<method name="set_plugin_priority_order">
+			<return type="void" />
+			<argument index="0" name="priorities" type="Array" />
+			<description>
+				Sets the priority order of advertisement plugins.
+			</description>
+		</method>
+	</methods>
+	<signals>
+		<signal name="ad_clicked">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+				Emitted whenever an advertisement is clicked. You probobaly want to be using the AdController/BannerAdController version of this signal.
+			</description>
+		</signal>
+		<signal name="ad_closed">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+				Emitted whenever an advertisement is closed. You probobaly want to be using the AdController/BannerAdController version of this signal.
+			</description>
+		</signal>
+		<signal name="ad_error">
+			<argument index="0" name="request_id" type="int" />
+			<argument index="1" name="message" type="String" />
+			<description>
+				Emitted whenever an advertisement has an error. You probobaly want to be using the AdController/BannerAdController version of this signal.
+			</description>
+		</signal>
+		<signal name="ad_loaded">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+				Emitted whenever an advertisement is loaded. You probobaly want to be using the AdController/BannerAdController version of this signal.
+			</description>
+		</signal>
+		<signal name="ad_reward_earned">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+				Emitted whenever an advertisement reward is earned by the user. You probobaly want to be using the AdController/BannerAdController version of this signal.
+			</description>
+		</signal>
+		<signal name="ad_shown">
+			<argument index="0" name="request_id" type="int" />
+			<description>
+				Emitted whenever an advertisement is shown. You probobaly want to be using the AdController/BannerAdController version of this signal.
+			</description>
+		</signal>
+	</signals>
+	<constants>
+		<constant name="AdType::AD_TYPE_BANNER" value="0" enum="AdType">
+			Indicates a banner ad type.
+		</constant>
+		<constant name="AdType::AD_TYPE_INTERSTITIAL" value="1" enum="AdType">
+			Indicates an interstitial ad type.
+		</constant>
+		<constant name="AdType::AD_TYPE_REWARDED" value="2" enum="AdType">
+			Indicates a rewarded interstitial ad type.
+		</constant>
+		<constant name="BannerAdSize::BANNER_SIZE_SMALL" value="0" enum="BannerAdSize">
+			Indicates a small banner size.
+		</constant>
+		<constant name="BannerAdSize::BANNER_SIZE_LARGE" value="1" enum="BannerAdSize">
+			Indicates a large banner size.
+		</constant>
+		<constant name="BannerAdLocation::BANNER_LOCATION_BOTTOM" value="0" enum="BannerAdLocation">
+			Indicates a banner should be located on the bottom of the screen.
+		</constant>
+		<constant name="BannerAdLocation::BANNER_LOCATION_TOP" value="1" enum="BannerAdLocation">
+			Indicates a banner should be located on the top of the screen.
+		</constant>
+	</constants>
+</class>

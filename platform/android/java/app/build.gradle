@@ -121,6 +121,7 @@ android {
         targetSdkVersion getExportTargetSdkVersion()
 
         missingDimensionStrategy 'products', 'template'
+        multiDexEnabled true
 //CHUNK_ANDROID_DEFAULTCONFIG_BEGIN
 //CHUNK_ANDROID_DEFAULTCONFIG_END
     }

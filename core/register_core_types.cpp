@@ -70,6 +70,7 @@
 #include "core/packed_data_container.h"
 #include "core/path_remap.h"
 #include "core/project_settings.h"
+#include "core/ramatak/monetization_settings.h"
 #include "core/translation.h"
 #include "core/undo_redo.h"
 
@@ -269,6 +270,7 @@ void register_core_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("InputMap", InputMap::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("JSON", _JSON::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Time", Time::get_singleton()));
+	Engine::get_singleton()->add_singleton(Engine::Singleton("MonetizationSettings", MonetizationSettings::get_singleton()));
 }
 
 void unregister_core_types() {

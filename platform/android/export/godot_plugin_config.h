@@ -96,6 +96,8 @@ struct PluginConfigAndroid {
 
 	static PluginConfigAndroid load_plugin_config(Ref<ConfigFile> config_file, const String &path);
 
+	static PluginConfigAndroid parse_plugin_config(Ref<ConfigFile> config_file, const String &base_path);
+
 	static String get_plugins_binaries(String type, Vector<PluginConfigAndroid> plugins_configs);
 
 	static String get_plugins_custom_maven_repos(Vector<PluginConfigAndroid> plugins_configs);

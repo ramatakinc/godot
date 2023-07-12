@@ -127,6 +127,8 @@ public:
 
 	Error install_android_template_from_file(const String &p_file);
 
+	Error install_android_template_from_file_to_path(const String &p_file, const String &p_path);
+
 	void popup_manager();
 
 	ExportTemplateManager();

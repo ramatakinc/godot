@@ -65,6 +65,7 @@
 #include "physics_2d_server.h"
 #include "physics_server.h"
 #include "scene/debugger/script_debugger_remote.h"
+#include "servers/ramatak/ad_server.h"
 #include "visual/shader_types.h"
 #include "visual_server.h"
 
@@ -118,6 +119,8 @@ void register_server_types() {
 	ClassDB::register_virtual_class<Navigation2DServer>();
 	ClassDB::register_class<ARVRServer>();
 	ClassDB::register_class<CameraServer>();
+
+	ClassDB::register_class<AdServer>();
 
 	shader_types = memnew(ShaderTypes);
 
@@ -217,4 +220,5 @@ void register_server_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Navigation2DServer", Navigation2DServer::get_singleton_mut()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("ARVRServer", ARVRServer::get_singleton()));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("CameraServer", CameraServer::get_singleton()));
+	Engine::get_singleton()->add_singleton(Engine::Singleton("AdServer", AdServer::get_singleton()));
 }
