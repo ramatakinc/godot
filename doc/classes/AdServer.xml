@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AdServer" inherits="Object" version="3.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
 	<brief_description>
-		The AdServer is a low-level interface with the Ramtak Mobile Studio advertisement system.
+		The AdServer is a low-level interface with the Ramatak Mobile Studio advertisement system.
 	</brief_description>
 	<description>
 		While it is possible to use AdServer as a user, it's much more ergonomic to use the AdController and BannerAdController nodes.
@@ -12,7 +12,7 @@
 		<method name="get_available_plugins" qualifiers="const">
 			<return type="Array" />
 			<description>
-				Regurns a list of available plugins in the current build.
+				Returns a list of available plugins in the current build.
 			</description>
 		</method>
 		<method name="get_plugin_priority_order" qualifiers="const">
@@ -33,38 +33,38 @@
 		<signal name="ad_clicked">
 			<argument index="0" name="request_id" type="int" />
 			<description>
-				Emitted whenever an advertisement is clicked. You probobaly want to be using the AdController/BannerAdController version of this signal.
+				Emitted whenever an advertisement is clicked. You probably want to be using the AdController/BannerAdController version of this signal.
 			</description>
 		</signal>
 		<signal name="ad_closed">
 			<argument index="0" name="request_id" type="int" />
 			<description>
-				Emitted whenever an advertisement is closed. You probobaly want to be using the AdController/BannerAdController version of this signal.
+				Emitted whenever an advertisement is closed. You probably want to be using the AdController/BannerAdController version of this signal.
 			</description>
 		</signal>
 		<signal name="ad_error">
 			<argument index="0" name="request_id" type="int" />
 			<argument index="1" name="message" type="String" />
 			<description>
-				Emitted whenever an advertisement has an error. You probobaly want to be using the AdController/BannerAdController version of this signal.
+				Emitted whenever an advertisement has an error. You probably want to be using the AdController/BannerAdController version of this signal.
 			</description>
 		</signal>
 		<signal name="ad_loaded">
 			<argument index="0" name="request_id" type="int" />
 			<description>
-				Emitted whenever an advertisement is loaded. You probobaly want to be using the AdController/BannerAdController version of this signal.
+				Emitted whenever an advertisement is loaded. You probably want to be using the AdController/BannerAdController version of this signal.
 			</description>
 		</signal>
 		<signal name="ad_reward_earned">
 			<argument index="0" name="request_id" type="int" />
 			<description>
-				Emitted whenever an advertisement reward is earned by the user. You probobaly want to be using the AdController/BannerAdController version of this signal.
+				Emitted whenever an advertisement reward is earned by the user. You probably want to be using the AdController/BannerAdController version of this signal.
 			</description>
 		</signal>
 		<signal name="ad_shown">
 			<argument index="0" name="request_id" type="int" />
 			<description>
-				Emitted whenever an advertisement is shown. You probobaly want to be using the AdController/BannerAdController version of this signal.
+				Emitted whenever an advertisement is shown. You probably want to be using the AdController/BannerAdController version of this signal.
 			</description>
 		</signal>
 	</signals>
