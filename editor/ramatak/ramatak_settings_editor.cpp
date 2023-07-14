@@ -22,9 +22,11 @@ void RamatakSettingsAdUnitEditor::_bind_methods() {
 Dictionary RamatakSettingsAdUnitEditor::get_ad_unit_config() const {
 	Dictionary ad_unit_config;
 	ERR_FAIL_COND_V_MSG(edits.size() != labels.size(), ad_unit_config, "Edits and labels size mismatch.");
-	ad_unit_config[_AD_UNIT_TYPE_KEY] = ad_unit_type_option_button->get_selected_metadata();
-	for (int i = 0; i < edits.size(); i++) {
-		ad_unit_config[plugins[i]] = edits[i]->get_text();
+	if (ad_unit_type_option_button != nullptr) {
+		ad_unit_config[_AD_UNIT_TYPE_KEY] = ad_unit_type_option_button->get_selected_metadata();
+		for (int i = 0; i < edits.size(); i++) {
+			ad_unit_config[plugins[i]] = edits[i]->get_text();
+		}
 	}
 	return ad_unit_config;
 }
@@ -93,6 +95,10 @@ void RamatakSettingsAdUnitEditor::_ad_unit_edited(Variant p_arg) {
 
 void RamatakSettingsAdUnitEditor::clear() {
 	ad_unit = "";
+	if (ad_unit_type_option_button) {
+		memdelete(ad_unit_type_option_button);
+		ad_unit_type_option_button = nullptr;
+	}
 	ERR_FAIL_COND_MSG(edits.size() != labels.size(), "Edits and labels size mismatch.");
 	for (int i = 0; i < edits.size(); i++) {
 		LineEdit *edit = edits[i];
@@ -177,6 +183,7 @@ void RamatakSettingsAdUnitSetEditor::_add_ad_unit() {
 }
 
 void RamatakSettingsAdUnitSetEditor::_save() {
+	print_verbose("Attempting to save ad unit settings.");
 	if (Error::OK != ProjectSettings::get_singleton()->save()) {
 		WARN_PRINT("Failed to save");
 	}
@@ -186,11 +193,22 @@ void RamatakSettingsAdUnitSetEditor::_remove_ad_unit() {
 	Dictionary ad_units_config = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_units");
 	Vector<int> selected_items = edit_items_list->get_selected_items();
 	if (selected_items.size() > 0) {
+		int item_to_remove = selected_items.get(0);
 		// DEV_ASSERT(ad_unit_editor->get_ad_unit() != "");
 		ad_units_config.erase(ad_unit_editor->get_ad_unit());
-		edit_items_list->remove_item(selected_items.get(0));
-		ad_unit_editor->clear();
-		ad_unit_editor->set_disabled(true);
+		edit_items_list->remove_item(item_to_remove);
+		edit_items_list->unselect_all();
+		if (edit_items_list->get_item_count() > 0) {
+			int item_to_select = 0;
+			if (item_to_remove > 0) {
+				item_to_select = item_to_remove - 1;
+			}
+			edit_items_list->select(item_to_select);
+			String ad_unit = edit_items_list->get_item_text(item_to_select);
+			ad_unit_editor->set_ad_unit(ad_unit);
+		} else {
+			ad_unit_editor->clear();
+		}
 	}
 	ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", ad_units_config);
 	call_deferred("_save");
