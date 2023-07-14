@@ -15,9 +15,9 @@ class Label;
 class RamatakSettingsAdUnitEditor : public Control {
 	GDCLASS(RamatakSettingsAdUnitEditor, Control);
 
-	GridContainer *grid_container;
+	GridContainer *grid_container = nullptr;
 
-	OptionButton *ad_unit_type_option_button;
+	OptionButton *ad_unit_type_option_button = nullptr;
 	List<String> plugins;
 	List<Label *> labels;
 	List<LineEdit *> edits;
