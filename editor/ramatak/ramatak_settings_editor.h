@@ -2,6 +2,8 @@
 #define _RAMATAK_SETTINGS_EDITOR
 
 #include "scene/gui/control.h"
+#include "scene/gui/split_container.h"
+#include "scene/gui/tree.h"
 
 class HBoxContainer;
 class VBoxContainer;
@@ -45,21 +47,22 @@ class RamatakSettingsAdUnitSetEditor : public Control {
 
 	VBoxContainer *main_vbox = nullptr;
 	HBoxContainer *add_hbox = nullptr;
-	HBoxContainer *edit_hbox = nullptr;
+	HSplitContainer *edit_hsplit = nullptr;
 
 	Label *add_label = nullptr;
 	LineEdit *add_edit = nullptr;
 	Button *add_button = nullptr;
-	Button *remove_button = nullptr;
 
-	ItemList *edit_items_list = nullptr;
+	Tree *edit_tree = nullptr;
 	RamatakSettingsAdUnitEditor *ad_unit_editor = nullptr;
 
 	void _add_edit_text_changed(const String &p_text);
-	void _edit_items_list_item_selected(int p_index);
+	void _add_edit_text_entered(const String &p_text);
+	void _edit_tree_item_selected();
+	void _edit_tree_button_pressed(Object *p_item, int p_column, int p_id);
 	void _ad_unit_edited();
 	void _add_ad_unit();
-	void _remove_ad_unit();
+	void _remove_ad_unit(Object *p_item = nullptr);
 	void _save();
 
 	friend class RamatakSettingsEditor;
@@ -141,7 +144,7 @@ class RamatakSettingsEditor : public Control {
 
 	Array plugins;
 
-	HBoxContainer *main_hbox = nullptr;
+	HSplitContainer *main_hsplit = nullptr;
 	ItemList *edit_items_list = nullptr;
 	RamatakSettingsAdUnitSetEditor *ad_unit_set_editor = nullptr;
 	RamatakAdPluginPriorityEditor *ad_priority_editor = nullptr;

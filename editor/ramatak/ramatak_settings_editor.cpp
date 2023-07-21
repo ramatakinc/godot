@@ -39,7 +39,7 @@ void RamatakSettingsAdUnitEditor::set_ad_unit(const String &p_ad_unit) {
 	// Set up the option button to select ad unit type.
 	{
 		Label *ad_unit_type_label = memnew(Label);
-		ad_unit_type_label->set_text("Ad unit type:");
+		ad_unit_type_label->set_text("Ad Unit Type:");
 		grid_container->add_child(ad_unit_type_label);
 
 		ad_unit_type_option_button = memnew(OptionButton);
@@ -73,7 +73,7 @@ void RamatakSettingsAdUnitEditor::set_ad_unit(const String &p_ad_unit) {
 		plugins.push_back(all_plugins[i]);
 
 		Label *label = memnew(Label);
-		label->set_text(vformat(TTR("%s ad unit ID:"), plugins[i]));
+		label->set_text(vformat(TTR("%s Ad Unit ID:"), plugins[i]));
 		label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		grid_container->add_child(label);
 		labels.push_back(label);
@@ -142,30 +142,42 @@ RamatakSettingsAdUnitEditor::RamatakSettingsAdUnitEditor() {
 void RamatakSettingsAdUnitSetEditor::_bind_methods() {
 	ClassDB::bind_method("_ad_unit_edited", &RamatakSettingsAdUnitSetEditor::_ad_unit_edited);
 	ClassDB::bind_method("_add_edit_text_changed", &RamatakSettingsAdUnitSetEditor::_add_edit_text_changed);
+	ClassDB::bind_method("_add_edit_text_entered", &RamatakSettingsAdUnitSetEditor::_add_edit_text_entered);
 	ClassDB::bind_method("_add_ad_unit", &RamatakSettingsAdUnitSetEditor::_add_ad_unit);
 	ClassDB::bind_method("_remove_ad_unit", &RamatakSettingsAdUnitSetEditor::_remove_ad_unit);
-	ClassDB::bind_method("_edit_items_list_item_selected", &RamatakSettingsAdUnitSetEditor::_edit_items_list_item_selected);
+	ClassDB::bind_method("_edit_tree_item_selected", &RamatakSettingsAdUnitSetEditor::_edit_tree_item_selected);
+	ClassDB::bind_method("_edit_tree_button_pressed", &RamatakSettingsAdUnitSetEditor::_edit_tree_button_pressed);
 	ClassDB::bind_method("_save", &RamatakSettingsAdUnitSetEditor::_save);
 }
 
 void RamatakSettingsAdUnitSetEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_ENTER_TREE) {
+		edit_tree->clear();
+		edit_tree->create_item();
+
 		Dictionary ad_units_config = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_units");
-		edit_items_list->clear();
 		Array ad_unit_names = ad_units_config.keys();
 		for (int i = 0; i < ad_unit_names.size(); i++) {
-			edit_items_list->add_item(ad_unit_names[i]);
+			TreeItem *item = edit_tree->create_item(edit_tree->get_root());
+			item->set_text(0, ad_unit_names[i]);
+			item->add_button(0, get_icon("Remove", "EditorIcons"), -1, false, "Remove");
 		}
 		if (ad_unit_names.size() > 0) {
-			edit_items_list->select(0);
+			edit_tree->get_root()->get_children()->select(0);
 			ad_unit_editor->set_ad_unit(ad_unit_names[0]);
+			ad_unit_editor->set_ad_unit(ad_unit_editor->get_ad_unit());
 		}
-		ad_unit_editor->set_ad_unit(ad_unit_editor->get_ad_unit());
 	}
 }
 
 void RamatakSettingsAdUnitSetEditor::_add_edit_text_changed(const String &p_text) {
 	add_button->set_disabled(p_text.empty());
+}
+
+void RamatakSettingsAdUnitSetEditor::_add_edit_text_entered(const String &p_text) {
+	if (!p_text.empty()) {
+		_add_ad_unit();
+	}
 }
 
 void RamatakSettingsAdUnitSetEditor::_add_ad_unit() {
@@ -174,12 +186,17 @@ void RamatakSettingsAdUnitSetEditor::_add_ad_unit() {
 	if (ad_units_config.has(ad_unit) || ad_unit == "") {
 		return;
 	}
+
 	add_edit->set_text("");
 	add_button->set_disabled(true);
 	ad_units_config[ad_unit] = Dictionary();
 	ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", ad_units_config);
 	call_deferred("_save");
-	edit_items_list->add_item(ad_unit);
+
+	TreeItem *item = edit_tree->create_item(edit_tree->get_root());
+	item->set_text(0, ad_unit);
+	item->add_button(0, get_icon("Remove", "EditorIcons"), -1, false, "Remove");
+	item->select(0);
 }
 
 void RamatakSettingsAdUnitSetEditor::_save() {
@@ -189,41 +206,44 @@ void RamatakSettingsAdUnitSetEditor::_save() {
 	}
 }
 
-void RamatakSettingsAdUnitSetEditor::_remove_ad_unit() {
+void RamatakSettingsAdUnitSetEditor::_remove_ad_unit(Object *p_item) {
+	TreeItem *item = Object::cast_to<TreeItem>(p_item);
+	TreeItem *item_to_remove = item ? item : edit_tree->get_selected();
+
 	Dictionary ad_units_config = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_units");
-	Vector<int> selected_items = edit_items_list->get_selected_items();
-	if (selected_items.size() > 0) {
-		int item_to_remove = selected_items.get(0);
-		// DEV_ASSERT(ad_unit_editor->get_ad_unit() != "");
+	if (item_to_remove) {
 		ad_units_config.erase(ad_unit_editor->get_ad_unit());
-		edit_items_list->remove_item(item_to_remove);
-		edit_items_list->unselect_all();
-		if (edit_items_list->get_item_count() > 0) {
-			int item_to_select = 0;
-			if (item_to_remove > 0) {
-				item_to_select = item_to_remove - 1;
+
+		if (edit_tree->get_selected() == item) {
+			TreeItem *item_to_select = item_to_remove->get_next();
+			if (!item_to_select) {
+				item_to_select = item_to_remove->get_prev();
 			}
-			edit_items_list->select(item_to_select);
-			String ad_unit = edit_items_list->get_item_text(item_to_select);
-			ad_unit_editor->set_ad_unit(ad_unit);
-		} else {
-			ad_unit_editor->clear();
+			if (item_to_select) {
+				item_to_select->select(0);
+			}
 		}
+
+		edit_tree->get_root()->remove_child(item_to_remove);
 	}
+
 	ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", ad_units_config);
 	call_deferred("_save");
 }
 
-void RamatakSettingsAdUnitSetEditor::_edit_items_list_item_selected(int p_index) {
+void RamatakSettingsAdUnitSetEditor::_edit_tree_item_selected() {
 	Dictionary previous_ad_unit_config = ad_unit_editor->get_ad_unit_config();
 	Dictionary ad_units_config = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_units");
 	if (ad_unit_editor->get_ad_unit() != "") {
 		ad_units_config[ad_unit_editor->get_ad_unit()] = previous_ad_unit_config;
 	}
 
-	String ad_unit = edit_items_list->get_item_text(p_index);
+	String ad_unit = edit_tree->get_selected()->get_text(0);
 	ad_unit_editor->set_ad_unit(ad_unit);
-	remove_button->set_disabled(false);
+}
+
+void RamatakSettingsAdUnitSetEditor::_edit_tree_button_pressed(Object *p_item, int p_column, int p_id) {
+	_remove_ad_unit(p_item);
 }
 
 void RamatakSettingsAdUnitSetEditor::_ad_unit_edited() {
@@ -245,7 +265,7 @@ RamatakSettingsAdUnitSetEditor::RamatakSettingsAdUnitSetEditor() {
 
 	add_hbox = memnew(HBoxContainer);
 	add_label = memnew(Label);
-	add_label->set_text(TTR("Add Advertisement Unit"));
+	add_label->set_text(TTR("Advertisement Unit:"));
 	add_hbox->add_child(add_label);
 
 	add_edit = memnew(LineEdit);
@@ -253,6 +273,7 @@ RamatakSettingsAdUnitSetEditor::RamatakSettingsAdUnitSetEditor() {
 	add_edit->set_placeholder(TTR("Name (e.g. level_completed_interstitial)"));
 	add_edit->set_clear_button_enabled(true);
 	add_edit->connect("text_changed", this, "_add_edit_text_changed");
+	add_edit->connect("text_entered", this, "_add_edit_text_entered");
 	add_hbox->add_child(add_edit);
 
 	add_button = memnew(Button);
@@ -261,29 +282,25 @@ RamatakSettingsAdUnitSetEditor::RamatakSettingsAdUnitSetEditor() {
 	add_button->connect("pressed", this, "_add_ad_unit");
 	add_hbox->add_child(add_button);
 
-	remove_button = memnew(Button);
-	remove_button->set_text(TTR("Remove"));
-	remove_button->set_disabled(true);
-	remove_button->connect("pressed", this, "_remove_ad_unit");
-	add_hbox->add_child(remove_button);
-
 	main_vbox->add_child(add_hbox);
 
-	edit_hbox = memnew(HBoxContainer);
-	edit_hbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	edit_hbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	edit_hsplit = memnew(HSplitContainer);
+	edit_hsplit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	edit_hsplit->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
-	edit_items_list = memnew(ItemList);
-	edit_items_list->set_custom_minimum_size(Size2(200, 0));
-	edit_items_list->connect("item_selected", this, "_edit_items_list_item_selected", Vector<Variant>(), CONNECT_DEFERRED);
-	edit_hbox->add_child(edit_items_list);
+	edit_tree = memnew(Tree);
+	edit_tree->set_hide_root(true);
+	edit_tree->set_custom_minimum_size(Size2(200, 0));
+	edit_tree->connect("item_selected", this, "_edit_tree_item_selected", varray(), CONNECT_DEFERRED);
+	edit_tree->connect("button_pressed", this, "_edit_tree_button_pressed");
+	edit_hsplit->add_child(edit_tree);
 
 	ad_unit_editor = memnew(RamatakSettingsAdUnitEditor);
 	ad_unit_editor->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	ad_unit_editor->connect("edited", this, "_ad_unit_edited");
-	edit_hbox->add_child(ad_unit_editor);
+	edit_hsplit->add_child(ad_unit_editor);
 
-	main_vbox->add_child(edit_hbox);
+	main_vbox->add_child(edit_hsplit);
 }
 
 RamatakAdPluginSettingsEditor::RamatakAdPluginSettingsEditor() {
@@ -375,6 +392,10 @@ RamatakAdPluginPriorityEditor::RamatakAdPluginPriorityEditor() {
 	main_hbox->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
 	add_child(main_hbox);
 
+	HSplitContainer *hsplit = memnew(HSplitContainer);
+	hsplit->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	main_hbox->add_child(hsplit);
+
 	VBoxContainer *disabled_plugins_vbox = memnew(VBoxContainer);
 	disabled_plugins_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	disabled_plugins_vbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
@@ -383,11 +404,11 @@ RamatakAdPluginPriorityEditor::RamatakAdPluginPriorityEditor() {
 	disabled_plugins_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
 	Label *disabled_plugins_label = memnew(Label);
-	disabled_plugins_label->set_text("Disabled plugins");
+	disabled_plugins_label->set_text("Disabled Plugins:");
 
 	disabled_plugins_vbox->add_child(disabled_plugins_label);
 	disabled_plugins_vbox->add_child(disabled_plugins_list);
-	main_hbox->add_child(disabled_plugins_vbox);
+	hsplit->add_child(disabled_plugins_vbox);
 
 	VBoxContainer *enabled_plugins_vbox = memnew(VBoxContainer);
 	enabled_plugins_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -397,32 +418,35 @@ RamatakAdPluginPriorityEditor::RamatakAdPluginPriorityEditor() {
 	enabled_plugins_list->set_v_size_flags(Control::SIZE_EXPAND_FILL);
 
 	Label *enabled_plugins_label = memnew(Label);
-	enabled_plugins_label->set_text("Enabled plugins");
+	enabled_plugins_label->set_text("Enabled Plugins:");
 
 	enabled_plugins_vbox->add_child(enabled_plugins_label);
 	enabled_plugins_vbox->add_child(enabled_plugins_list);
-	main_hbox->add_child(enabled_plugins_vbox);
+	hsplit->add_child(enabled_plugins_vbox);
 
 	button_row = memnew(VBoxContainer);
 	main_hbox->add_child(button_row);
 
+	// Make buttons align with the plugin lists.
+	button_row->add_child(memnew(Label(" ")));
+
 	increase_prioity = memnew(Button);
-	increase_prioity->set_text("Increase priority");
+	increase_prioity->set_text("Increase Priority");
 	increase_prioity->connect("pressed", this, "_increase_selected_priority");
 	button_row->add_child(increase_prioity);
 
 	decrease_prioity = memnew(Button);
-	decrease_prioity->set_text("Decrease priority");
+	decrease_prioity->set_text("Decrease Priority");
 	decrease_prioity->connect("pressed", this, "_decrease_selected_priority");
 	button_row->add_child(decrease_prioity);
 
 	enable_plugin = memnew(Button);
-	enable_plugin->set_text("Enable plugin");
+	enable_plugin->set_text("Enable Plugin");
 	enable_plugin->connect("pressed", this, "_enable_selected_plugin");
 	button_row->add_child(enable_plugin);
 
 	disable_plugin = memnew(Button);
-	disable_plugin->set_text("Disable plugin");
+	disable_plugin->set_text("Disable Plugin");
 	disable_plugin->connect("pressed", this, "_disable_selected_plugin");
 	button_row->add_child(disable_plugin);
 }
@@ -523,6 +547,21 @@ void RamatakAdPluginPriorityEditor::_disable_selected_plugin() {
 }
 
 RamatakSettingsEditor::RamatakSettingsEditor() {
+	if (!ProjectSettings::get_singleton()->has_setting("ramatak/monetization/ad_units")) {
+		ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", Dictionary());
+	}
+	ProjectSettings::get_singleton()->set_initial_value("ramatak/monetization/ad_units", Dictionary());
+
+	if (!ProjectSettings::get_singleton()->has_setting("ramatak/monetization/ad_plugin_config")) {
+		ProjectSettings::get_singleton()->set("ramatak/monetization/ad_plugin_config", Dictionary());
+	}
+	ProjectSettings::get_singleton()->set_initial_value("ramatak/monetization/ad_plugin_config", Dictionary());
+
+	if (!ProjectSettings::get_singleton()->has_setting("ramatak/monetization/ad_plugin_priorities")) {
+		ProjectSettings::get_singleton()->set("ramatak/monetization/ad_plugin_priorities", Array());
+	}
+	ProjectSettings::get_singleton()->set_initial_value("ramatak/monetization/ad_plugin_priorities", Array());
+
 	ad_plugin_settings_editor = memnew(RamatakAdPluginSettingsEditor);
 	ad_plugin_settings_editor->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
 	ad_plugin_settings_editor->set_h_size_flags(Control::SIZE_EXPAND_FILL);
@@ -535,23 +574,23 @@ RamatakSettingsEditor::RamatakSettingsEditor() {
 	ad_priority_editor->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
 	ad_priority_editor->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 
-	main_hbox = memnew(HBoxContainer);
-	main_hbox->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
-	add_child(main_hbox);
+	main_hsplit = memnew(HSplitContainer);
+	main_hsplit->set_anchors_and_margins_preset(LayoutPreset::PRESET_WIDE, LayoutPresetMode::PRESET_MODE_KEEP_SIZE);
+	add_child(main_hsplit);
 
 	edit_items_list = memnew(ItemList);
 	edit_items_list->set_custom_minimum_size(Size2(200, 0));
 
-	edit_items_list->add_item("Ad units");
+	edit_items_list->add_item("Ad Units");
 	edit_items_list->set_item_metadata(edit_items_list->get_item_count() - 1, (Variant)AD_UNITS);
 
-	edit_items_list->add_item("Plugin priorities");
+	edit_items_list->add_item("Plugin Priorities");
 	edit_items_list->set_item_metadata(edit_items_list->get_item_count() - 1, (Variant)PLUGIN_PRIORITIES);
 
 	edit_items_list->connect("item_selected", this, "_edit_items_list_item_selected");
-	main_hbox->add_child(edit_items_list);
+	main_hsplit->add_child(edit_items_list);
 
-	main_hbox->add_child(ad_unit_set_editor);
+	main_hsplit->add_child(ad_unit_set_editor);
 	current_pane = ad_unit_set_editor;
 }
 
@@ -562,28 +601,28 @@ void RamatakSettingsEditor::_bind_methods() {
 void RamatakSettingsEditor::_edit_items_list_item_selected(int p_index) {
 	if (edit_items_list->get_item_metadata(p_index) == (Variant)AD_UNITS) {
 		if (current_pane) {
-			main_hbox->remove_child(current_pane);
+			main_hsplit->remove_child(current_pane);
 		}
 
 		current_pane = ad_unit_set_editor;
-		main_hbox->add_child(current_pane);
+		main_hsplit->add_child(current_pane);
 
 	} else if (edit_items_list->get_item_metadata(p_index) == (Variant)PLUGIN_PRIORITIES) {
 		if (current_pane) {
-			main_hbox->remove_child(current_pane);
+			main_hsplit->remove_child(current_pane);
 		}
 		current_pane = this->ad_priority_editor;
-		main_hbox->add_child(current_pane);
+		main_hsplit->add_child(current_pane);
 	} else {
 		if (current_pane) {
-			main_hbox->remove_child(current_pane);
+			main_hsplit->remove_child(current_pane);
 		}
 
 		String plugin = edit_items_list->get_item_metadata(p_index);
 		this->ad_plugin_settings_editor->set_plugin(plugin);
 
 		current_pane = this->ad_plugin_settings_editor;
-		main_hbox->add_child(current_pane);
+		main_hsplit->add_child(current_pane);
 	}
 }
 
@@ -591,9 +630,6 @@ void RamatakSettingsEditor::_notification(int p_what) {
 	if (p_what == NOTIFICATION_READY) {
 		plugins = AdServer::get_singleton()->get_available_plugins();
 		for (int i = 0; i < plugins.size(); i++) {
-			if (i == 0) {
-				ad_unit_set_editor->remove_button->set_disabled(false);
-			}
 			Ref<AdPlugin> plugin = AdServer::get_singleton()->get_plugin_raw(plugins[i]);
 			Array key_tooltip_pairs = plugin->get_config_key_tooltip_pairs();
 			if (key_tooltip_pairs.empty()) {
