@@ -316,6 +316,10 @@ bool EditorHelpSearch::Runner::_phase_match_classes_init() {
 }
 
 bool EditorHelpSearch::Runner::_phase_match_classes() {
+	if (!iterator_doc) {
+		return true;
+	}
+
 	DocData::ClassDoc &class_doc = iterator_doc->value();
 	if (!_is_class_disabled_by_feature_profile(class_doc.name)) {
 		matches[class_doc.name] = ClassMatch();
@@ -387,6 +391,10 @@ bool EditorHelpSearch::Runner::_phase_class_items_init() {
 }
 
 bool EditorHelpSearch::Runner::_phase_class_items() {
+	if (!iterator_match) {
+		return true;
+	}
+
 	ClassMatch &match = iterator_match->value();
 
 	if (search_flags & SEARCH_SHOW_HIERARCHY) {
@@ -410,7 +418,15 @@ bool EditorHelpSearch::Runner::_phase_member_items_init() {
 }
 
 bool EditorHelpSearch::Runner::_phase_member_items() {
+	if (!iterator_match) {
+		return true;
+	}
+
 	ClassMatch &match = iterator_match->value();
+
+	if (match.doc == NULL) {
+		return true;
+	}
 
 	TreeItem *parent = (search_flags & SEARCH_SHOW_HIERARCHY) ? class_items[match.doc->name] : root_item;
 	for (int i = 0; i < match.methods.size(); i++) {
@@ -467,6 +483,10 @@ void EditorHelpSearch::Runner::_match_item(TreeItem *p_item, const String &p_tex
 }
 
 TreeItem *EditorHelpSearch::Runner::_create_class_hierarchy(const ClassMatch &p_match) {
+	if (p_match.doc == NULL) {
+		return NULL;
+	}
+
 	if (class_items.has(p_match.doc->name)) {
 		return class_items[p_match.doc->name];
 	}
