@@ -145,14 +145,14 @@ String _android_xml_escape(const String &p_string) {
 }
 
 // Creates strings.xml files inside the gradle project for different locales.
-Error _create_project_name_strings_files(const Ref<EditorExportPreset> &p_preset, const String &project_name, const String &template_path) {
+Error _create_project_name_strings_files(const Ref<EditorExportPreset> &p_preset, const String &project_name) {
 	print_verbose("Creating strings resources for supported locales for project " + project_name);
 	// Stores the string into the default values directory.
 	String processed_default_xml_string = vformat(godot_project_name_xml_string, _android_xml_escape(project_name));
-	store_string_at_path(template_path + "/res/values/godot_project_name_string.xml", processed_default_xml_string);
+	store_string_at_path("res://android/build/res/values/godot_project_name_string.xml", processed_default_xml_string);
 
 	// Searches the Gradle project res/ directory to find all supported locales
-	DirAccessRef da = DirAccess::open(template_path + "/res");
+	DirAccessRef da = DirAccess::open("res://android/build/res");
 	if (!da) {
 		if (OS::get_singleton()->is_stdout_verbose()) {
 			print_error("Unable to open Android resources directory.");
@@ -171,7 +171,7 @@ Error _create_project_name_strings_files(const Ref<EditorExportPreset> &p_preset
 		}
 		String locale = file.replace("values-", "").replace("-r", "_");
 		String property_name = "application/config/name_" + locale;
-		String locale_directory = template_path + "/res/" + file + "/godot_project_name_string.xml";
+		String locale_directory = "res://android/build/res/" + file + "/godot_project_name_string.xml";
 		if (ProjectSettings::get_singleton()->has_setting(property_name)) {
 			String locale_project_name = ProjectSettings::get_singleton()->get(property_name);
 			String processed_xml_string = vformat(godot_project_name_xml_string, _android_xml_escape(locale_project_name));
@@ -260,7 +260,7 @@ String _get_activity_tag(const Ref<EditorExportPreset> &p_preset) {
 String _get_application_tag(const Ref<EditorExportPreset> &p_preset, bool p_has_read_write_storage_permission) {
 	int xr_mode_index = (int)(p_preset->get("xr_features/xr_mode"));
 	bool uses_xr = xr_mode_index == XR_MODE_OVR || xr_mode_index == XR_MODE_OPENXR;
-	Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
+Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
 	String maybe_add_cleartext_traffic_for_fb = "";
 	if (ad_priorities.has("META")) {
 		maybe_add_cleartext_traffic_for_fb = "        android:usesCleartextTraffic=\"true\"\n";
@@ -272,7 +272,7 @@ String _get_application_tag(const Ref<EditorExportPreset> &p_preset, bool p_has_
 			"        android:isGame=\"%s\"\n"
 			"        android:hasFragileUserData=\"%s\"\n"
 			"        android:requestLegacyExternalStorage=\"%s\"\n"
-			"%s"
+"%s"
 			"        tools:replace=\"android:allowBackup,android:isGame,android:hasFragileUserData,android:requestLegacyExternalStorage\"\n"
 			"        tools:ignore=\"GoogleAppIndexingWarning\"\n"
 			"        android:icon=\"@mipmap/icon\" >\n\n"
