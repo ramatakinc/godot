@@ -303,13 +303,16 @@ Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
 		manifest_application_text += "        <meta-data tools:node=\"remove\" android:name=\"com.oculus.supportedDevices\" />\n";
 	}
 
-	Dictionary admob_config = AdServer::get_singleton()->get_plugin_config("ADMOB");
-	if (ad_priorities.has("ADMOB") && admob_config.has("application_id")) {
-		// Update the meta-data 'android:name' attribute based on whether Admob is required.
-		String admob_app_id = admob_config["application_id"];
-		manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id + "\" />\n";
-	} else if (ad_priorities.has("ADMOB")) {
-		WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup.");
+	if (ad_priorities.has("ADMOB")) {
+		Dictionary admob_config = AdServer::get_singleton()->get_plugin_config("ADMOB");
+		if (admob_config.has("application_id")) {
+			// Update the meta-data 'android:name' attribute based on whether Admob is required.
+			String admob_app_id = admob_config["application_id"];
+			manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id + "\" />\n";
+		}
+	    else {
+			WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup.");
+		}
 	}
 
 	manifest_application_text += _get_activity_tag(p_preset);

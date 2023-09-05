@@ -60,7 +60,11 @@ void AdServer::initialize_modules() {
 				WARN_PRINT(vformat("Plugin not enabled, but requested: %s", plugin_name));
 				continue;
 			case AdPlugin::AdPluginResult::AUTH_ERROR:
+				WARN_PRINT(vformat("Authentication error, plugin initialization failed: %s", plugin_name));
+				continue;
 			case AdPlugin::AdPluginResult::NETWORK_ERROR:
+				WARN_PRINT(vformat("Network error, plugin initialization failed: %s", plugin_name));
+				continue;
 			case AdPlugin::AdPluginResult::UNSPECIFIED_ERROR:
 				WARN_PRINT(vformat("Plugin initialization failed: %s", plugin_name));
 				continue;
