@@ -1573,7 +1573,7 @@ Error Main::setup2(Thread::ID p_main_tid_override) {
 		OS::get_singleton()->set_environment("RAMATAK_KEYTOOL_HOME", keytool_default);
 	}
 
-	String sdkmanager_default = OS::get_singleton()->get_environment("JAVA_HOME").plus_file("bin/sdkmanager");
+	String sdkmanager_default = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("android/sdk/cmdline-tools/bin/sdkmanager");
 	String sdkmanager_home = OS::get_singleton()->get_environment("RAMATAK_SDKMANAGER_HOME");
 	if (respect_sdkamanager_home || respect_all_env) {
 		if (sdkmanager_home.empty()) {
