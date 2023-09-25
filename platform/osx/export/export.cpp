@@ -131,6 +131,10 @@ public:
 	virtual void resolve_platform_feature_priorities(const Ref<EditorExportPreset> &p_preset, Set<String> &p_features) {
 	}
 
+	virtual bool ad_plugins_supported() const {
+		return false;
+	}
+
 	EditorExportPlatformOSX();
 	~EditorExportPlatformOSX();
 };

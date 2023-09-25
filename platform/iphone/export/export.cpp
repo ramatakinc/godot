@@ -298,6 +298,10 @@ public:
 
 		return enabled_plugins;
 	}
+
+	virtual bool ad_plugins_supported() const {
+		return false;
+	}
 };
 
 void EditorExportPlatformIOS::get_preset_features(const Ref<EditorExportPreset> &p_preset, List<String> *r_features) {

@@ -39,6 +39,7 @@
 #include "core/os/os.h"
 #include "core/project_settings.h"
 #include "core/version_generated.gen.h"
+#include "editor/ramatak/ramatak_export_settings.h"
 #include "editor_data.h"
 #include "editor_node.h"
 #include "editor_scale.h"
@@ -295,6 +296,21 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 	_update_feature_list();
 	_update_export_all();
 	minimum_size_changed();
+
+	for (int i = 0; i < sections->get_tab_count(); i++) {
+		if (sections->get_tab_title(i) == "Ramatak") {
+			sections->remove_child(sections->get_tab_control(i));
+			break;
+		}
+	}
+	if (current->get_platform()->ad_plugins_supported()) {
+		VBoxContainer *ramtak_vb = memnew(VBoxContainer);
+		ramtak_vb->set_name(TTR("Ramatak"));
+		RamatakExportSettingsEditor *ramatak_export_settings = memnew(RamatakExportSettingsEditor);
+		ramatak_export_settings->set_preset(current);
+		ramtak_vb->add_child(ramatak_export_settings);
+		sections->add_child(ramtak_vb);
+	}
 
 	int script_export_mode = current->get_script_export_mode();
 	script_mode->select(script_export_mode);

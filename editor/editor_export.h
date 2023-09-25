@@ -320,6 +320,8 @@ public:
 	virtual void get_platform_features(List<String> *r_features) = 0;
 	virtual void resolve_platform_feature_priorities(const Ref<EditorExportPreset> &p_preset, Set<String> &p_features) = 0;
 
+	virtual bool ad_plugins_supported() const = 0;
+
 	EditorExportPlatform();
 };
 
@@ -508,6 +510,10 @@ public:
 
 	int get_chmod_flags() const;
 	void set_chmod_flags(int p_flags);
+
+	virtual bool ad_plugins_supported() const {
+		return false;
+	}
 
 	EditorExportPlatformPC();
 };
