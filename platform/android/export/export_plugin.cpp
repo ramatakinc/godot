@@ -358,7 +358,7 @@ void EditorExportPlatformAndroid::_check_for_changes_poll_thread(void *ud) {
 								d.description += "Chipset: " + p.get_slice("=", 1).strip_edges() + "\n";
 							} else if (p.begins_with("ro.opengles.version=")) {
 								uint32_t opengl = p.get_slice("=", 1).to_int();
-								d.description += "OpenGL: " + itos(opengl >> 16) + "." + itos((opengl >> 8) & 0xFF) + "." + itos((opengl)&0xFF) + "\n";
+								d.description += "OpenGL: " + itos(opengl >> 16) + "." + itos((opengl >> 8) & 0xFF) + "." + itos((opengl) & 0xFF) + "\n";
 							}
 						}
 
@@ -1766,6 +1766,8 @@ void EditorExportPlatformAndroid::get_export_options(List<ExportOption> *r_optio
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "apk_expansion/enable"), false));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "apk_expansion/SALT"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "apk_expansion/public_key", PROPERTY_HINT_MULTILINE_TEXT), ""));
+
+	r_options->push_back(ExportOption(PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_priorities"), Dictionary()));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::POOL_STRING_ARRAY, "permissions/custom_permissions"), PoolStringArray()));
 

@@ -106,37 +106,6 @@ public:
 
 class RamatakAdPluginPriorityEditor : public Control {
 	GDCLASS(RamatakAdPluginPriorityEditor, Control);
-
-	HBoxContainer *main_hbox = nullptr;
-
-	ItemList *disabled_plugins_list = nullptr;
-	ItemList *enabled_plugins_list = nullptr;
-
-	VBoxContainer *button_row = nullptr;
-	Button *increase_prioity = nullptr;
-	Button *decrease_prioity = nullptr;
-	Button *enable_plugin = nullptr;
-	Button *disable_plugin = nullptr;
-
-	int get_selected_index(ItemList *p_list);
-
-	void persist_settings();
-
-protected:
-	static void _bind_methods();
-
-	void _notification(int p_what);
-
-	void _increase_selected_priority();
-	void _decrease_selected_priority();
-
-	void _enable_selected_plugin();
-	void _disable_selected_plugin();
-
-public:
-	void set_platform(const String &p_platform);
-
-	RamatakAdPluginPriorityEditor();
 };
 
 class RamatakSettingsEditor : public Control {

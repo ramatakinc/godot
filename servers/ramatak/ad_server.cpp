@@ -9,7 +9,6 @@ AdServer *AdServer::singleton = nullptr;
 void AdServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_available_plugins"), &AdServer::get_available_plugins);
 
-	ClassDB::bind_method(D_METHOD("set_plugin_priority_order", "priorities"), &AdServer::set_plugin_priority_order);
 	ClassDB::bind_method(D_METHOD("get_plugin_priority_order"), &AdServer::get_plugin_priority_order);
 
 	ClassDB::bind_method(D_METHOD("_ad_loaded", "request_token"), &AdServer::_ad_loaded);
@@ -82,11 +81,6 @@ Ref<AdPlugin> AdServer::get_plugin_raw(String p_name) {
 
 Array AdServer::get_plugin_priority_order() const {
 	return ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
-}
-
-void AdServer::set_plugin_priority_order(Array p_priorites) {
-	ProjectSettings::get_singleton()->set("ramatak/monetization/ad_plugin_priorities", p_priorites);
-	ProjectSettings::get_singleton()->save();
 }
 
 Dictionary AdServer::get_plugin_config(String p_plugin) const {

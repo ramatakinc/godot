@@ -1011,9 +1011,15 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 		}
 	}
 
+	Array ramatak_ad_plugin_priorities = p_preset->get("ramatak/monetization/ad_plugin_priorities");
+	if (ramatak_ad_plugin_priorities.size() > 0) {
+		custom_map["ramatak/monetization/ad_plugin_priorities"] = ramatak_ad_plugin_priorities;
+	}
+
 	String config_file = "project.binary";
 	String engine_cfb = EditorSettings::get_singleton()->get_cache_dir().plus_file("tmp" + config_file);
 	ProjectSettings::get_singleton()->save_custom(engine_cfb, custom_map, custom_list);
+
 	Vector<uint8_t> data = FileAccess::get_file_as_array(engine_cfb);
 	DirAccess::remove_file_or_error(engine_cfb);
 
