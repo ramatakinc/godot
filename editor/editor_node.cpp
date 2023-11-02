@@ -3299,7 +3299,7 @@ void EditorNode::_update_addon_config() {
 }
 
 void EditorNode::set_addon_plugin_enabled(String p_addon, bool p_enabled, bool p_config_changed) {
-	if (!p_addon.begins_with("res://")) {
+	if (!p_addon.begins_with("res://") && !p_addon.begins_with(OS::get_singleton()->get_executable_path().get_base_dir().plus_file("addon"))) {
 		p_addon = _to_absolute_plugin_path(p_addon);
 	}
 
@@ -3374,7 +3374,7 @@ void EditorNode::set_addon_plugin_enabled(String p_addon, bool p_enabled, bool p
 }
 
 bool EditorNode::is_addon_plugin_enabled(const String &p_addon) const {
-	if (p_addon.begins_with("res://")) {
+	if (p_addon.begins_with("res://") || p_addon.begins_with(OS::get_singleton()->get_executable_path().get_base_dir().plus_file("addon"))) {
 		return plugin_addons.has(p_addon);
 	}
 

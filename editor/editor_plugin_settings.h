@@ -55,7 +55,7 @@ class EditorPluginSettings : public VBoxContainer {
 	void _cell_button_pressed(Object *p_item, int p_column, int p_id);
 
 	static Vector<String> _get_plugins(const String &p_dir);
-
+	static Vector<String> _get_builtin_plugins();
 protected:
 	void _notification(int p_what);
 

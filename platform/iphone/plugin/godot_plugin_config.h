@@ -64,6 +64,7 @@ struct PluginConfigIOS {
 	static const char *DEPENDENCIES_LINKED_KEY;
 	static const char *DEPENDENCIES_EMBEDDED_KEY;
 	static const char *DEPENDENCIES_SYSTEM_KEY;
+	static const char *DEPENDENCIES_BUILTIN_KEY;
 	static const char *DEPENDENCIES_CAPABILITIES_KEY;
 	static const char *DEPENDENCIES_FILES_KEY;
 	static const char *DEPENDENCIES_LINKER_FLAGS;
@@ -100,6 +101,7 @@ struct PluginConfigIOS {
 	Vector<String> linked_dependencies;
 	Vector<String> embedded_dependencies;
 	Vector<String> system_dependencies;
+	Vector<String> builtin_dependencies;
 
 	Vector<String> files_to_copy;
 	Vector<String> capabilities;
@@ -125,6 +127,7 @@ const char *PluginConfigIOS::DEPENDENCIES_SECTION = "dependencies";
 const char *PluginConfigIOS::DEPENDENCIES_LINKED_KEY = "linked";
 const char *PluginConfigIOS::DEPENDENCIES_EMBEDDED_KEY = "embedded";
 const char *PluginConfigIOS::DEPENDENCIES_SYSTEM_KEY = "system";
+const char *PluginConfigIOS::DEPENDENCIES_BUILTIN_KEY="builtin";
 const char *PluginConfigIOS::DEPENDENCIES_CAPABILITIES_KEY = "capabilities";
 const char *PluginConfigIOS::DEPENDENCIES_LINKER_FLAGS = "linker_flags";
 const char *PluginConfigIOS::DEPENDENCIES_FILES_KEY = "files";
@@ -133,7 +136,6 @@ const char *PluginConfigIOS::PLIST_SECTION = "plist";
 
 static inline String resolve_local_dependency_path(String plugin_config_dir, String dependency_path) {
 	String absolute_path;
-
 	if (dependency_path.empty()) {
 		return absolute_path;
 	}
@@ -143,8 +145,9 @@ static inline String resolve_local_dependency_path(String plugin_config_dir, Str
 	}
 
 	String res_path = ProjectSettings::get_singleton()->globalize_path("res://");
+	
 	absolute_path = plugin_config_dir.plus_file(dependency_path);
-
+	
 	return absolute_path.replace(res_path, "res://");
 }
 
@@ -164,6 +167,22 @@ static inline String resolve_system_dependency_path(String dependency_path) {
 	return system_path.plus_file(dependency_path);
 }
 
+static inline String resolve_builtin_dependency_path(String dependency_path) {
+	String absolute_path;
+
+	if (dependency_path.empty()) {
+		return absolute_path;
+	}
+
+	if (dependency_path.is_abs_path()) {
+		return dependency_path;
+	}
+
+	String path = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("plugins");
+	WARN_PRINT("Builtin dependency full path: " + path);
+	return path.plus_file(dependency_path);
+}
+
 static inline Vector<String> resolve_local_dependencies(String plugin_config_dir, Vector<String> p_paths) {
 	Vector<String> paths;
 
@@ -180,11 +199,27 @@ static inline Vector<String> resolve_local_dependencies(String plugin_config_dir
 	return paths;
 }
 
-static inline Vector<String> resolve_system_dependencies(Vector<String> p_paths) {
+static inline Vector<String> resolve_system_dependencies(Vector<String>& p_paths) {
 	Vector<String> paths;
 
 	for (int i = 0; i < p_paths.size(); i++) {
 		String path = resolve_system_dependency_path(p_paths[i]);
+
+		if (path.empty()) {
+			continue;
+		}
+
+		paths.push_back(path);
+	}
+
+	return paths;
+}
+
+static inline Vector<String> resolve_builtin_dependencies(Vector<String>& p_paths) {
+	Vector<String> paths;
+
+	for (int i = 0; i < p_paths.size(); i++) {
+		String path = resolve_builtin_dependency_path(p_paths[i]);
 
 		if (path.empty()) {
 			continue;
@@ -203,6 +238,39 @@ static inline bool validate_plugin(PluginConfigIOS &plugin_config) {
 	bool valid_deinitialize = !plugin_config.deinitialization_method.empty();
 
 	bool fields_value = valid_name && valid_binary_name && valid_initialize && valid_deinitialize;
+
+	if (!fields_value) {
+		return false;
+	}
+
+	String plugin_extension = plugin_config.binary.get_extension().to_lower();
+
+	if ((plugin_extension == "a" && FileAccess::exists(plugin_config.binary)) ||
+			(plugin_extension == "xcframework" && DirAccess::exists(plugin_config.binary))) {
+		plugin_config.valid_config = true;
+		plugin_config.supports_targets = false;
+	} else {
+		String file_path = plugin_config.binary.get_base_dir();
+		String file_name = plugin_config.binary.get_basename().get_file();
+		String file_extension = plugin_config.binary.get_extension();
+		String release_file_name = file_path.plus_file(file_name + ".release." + file_extension);
+		String debug_file_name = file_path.plus_file(file_name + ".debug." + file_extension);
+
+		if ((plugin_extension == "a" && FileAccess::exists(release_file_name) && FileAccess::exists(debug_file_name)) ||
+				(plugin_extension == "xcframework" && DirAccess::exists(release_file_name) && DirAccess::exists(debug_file_name))) {
+			plugin_config.valid_config = true;
+			plugin_config.supports_targets = true;
+		}
+	}
+
+	return plugin_config.valid_config;
+}
+
+static inline bool validate_builtin_plugin(PluginConfigIOS &plugin_config) {
+	bool valid_name = !plugin_config.name.empty();
+	bool valid_binary_name = !plugin_config.binary.empty();
+
+	bool fields_value = valid_name && valid_binary_name;
 
 	if (!fields_value) {
 		return false;
@@ -291,11 +359,13 @@ static inline PluginConfigIOS load_plugin_config(Ref<ConfigFile> config_file, co
 		Vector<String> linked_dependencies = config_file->get_value(PluginConfigIOS::DEPENDENCIES_SECTION, PluginConfigIOS::DEPENDENCIES_LINKED_KEY, Vector<String>());
 		Vector<String> embedded_dependencies = config_file->get_value(PluginConfigIOS::DEPENDENCIES_SECTION, PluginConfigIOS::DEPENDENCIES_EMBEDDED_KEY, Vector<String>());
 		Vector<String> system_dependencies = config_file->get_value(PluginConfigIOS::DEPENDENCIES_SECTION, PluginConfigIOS::DEPENDENCIES_SYSTEM_KEY, Vector<String>());
+		Vector<String> builtin_dependencies = config_file->get_value(PluginConfigIOS::DEPENDENCIES_SECTION, PluginConfigIOS::DEPENDENCIES_BUILTIN_KEY, Vector<String>());
 		Vector<String> files = config_file->get_value(PluginConfigIOS::DEPENDENCIES_SECTION, PluginConfigIOS::DEPENDENCIES_FILES_KEY, Vector<String>());
 
 		plugin_config.linked_dependencies = resolve_local_dependencies(config_base_dir, linked_dependencies);
 		plugin_config.embedded_dependencies = resolve_local_dependencies(config_base_dir, embedded_dependencies);
 		plugin_config.system_dependencies = resolve_system_dependencies(system_dependencies);
+		plugin_config.builtin_dependencies = resolve_builtin_dependencies(builtin_dependencies);
 
 		plugin_config.files_to_copy = resolve_local_dependencies(config_base_dir, files);
 
@@ -374,7 +444,7 @@ static inline PluginConfigIOS load_plugin_config(Ref<ConfigFile> config_file, co
 		}
 	}
 
-	if (validate_plugin(plugin_config)) {
+	if (validate_plugin(plugin_config) || validate_builtin_plugin(plugin_config)) {
 		plugin_config.last_updated = get_plugin_modification_time(plugin_config, path);
 	}
 

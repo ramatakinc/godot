@@ -46,6 +46,9 @@
 #include "platform/iphone/plugin/godot_plugin_config.h"
 #include "string.h"
 
+#include "servers/ramatak/ad_plugin.h"
+#include "servers/ramatak/ad_server.h"
+
 #include <sys/stat.h>
 
 class EditorExportPlatformIOS : public EditorExportPlatform {
@@ -282,6 +285,23 @@ public:
 			}
 		}
 
+		plugins_dir = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("plugins");
+		if (DirAccess::exists(plugins_dir)) {
+			Array plugin_keys = AdServer::get_singleton()->get_plugin_priority_order();
+
+			for (int plugin_idx = 0; plugin_idx < plugin_keys.size(); ++plugin_idx) {
+			Ref<ConfigFile> config_file = memnew(ConfigFile);
+				String config_string = AdServer::get_singleton()->get_plugin_raw(plugin_keys[plugin_idx])->get_ios_plugin_config();
+	
+				PluginConfigIOS config = load_plugin_config(config_file, plugins_dir.plus_file(plugin_keys[plugin_idx]));
+				if (config.valid_config) {
+					loaded_plugins.push_back(config);
+				} else {
+					WARN_PRINT_ONCE(vformat("Invalid plugin config: %s", plugin_keys[plugin_idx]));
+				}
+			}
+		}
+
 		return loaded_plugins;
 	}
 
@@ -300,7 +320,7 @@ public:
 	}
 
 	virtual bool ad_plugins_supported() const {
-		return false;
+		return true;
 	}
 };
 
