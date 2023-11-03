@@ -65,9 +65,6 @@ String DummyAdPlugin::get_friendly_name() {
 String DummyAdPlugin::get_android_plugin_config() {
 	return "";
 }
-String DummyAdPlugin::get_ios_plugin_config() {
-	return "";
-}
 
 DummyAdPlugin::DummyAdPlugin() {}
 DummyAdPlugin::~DummyAdPlugin() {}

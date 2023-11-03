@@ -47,26 +47,12 @@ void EditorPluginSettings::_notification(int p_what) {
 	}
 }
 
-Vector<String> _get_unique(const Vector<String>& plugins) {
-	Vector<String> results;
-	for (int idx = 0; idx < plugins.size(); ++idx) {
-		String plugin = plugins[idx];
-		if (results.find(plugin) == -1)
-			results.push_back(plugin);
-			WARN_PRINT("NEW PLUGIN FOUND: " + plugin);
-	}
-	return results;
-}
-
 void EditorPluginSettings::update_plugins() {
 	plugin_list->clear();
 	updating = true;
 	TreeItem *root = plugin_list->create_item();
 
 	Vector<String> plugins = _get_plugins("res://addons");
-	Vector<String> builtin_plugins = _get_builtin_plugins();
-	builtin_plugins.append_array(plugins);
-	plugins = _get_unique(builtin_plugins);
 	plugins.sort();
 
 	for (int i = 0; i < plugins.size(); i++) {
@@ -189,8 +175,6 @@ Vector<String> EditorPluginSettings::_get_plugins(const String &p_dir) {
 		if (FileAccess::exists(plugin_config)) {
 			plugins.push_back(plugin_config);
 		} else {
-			WARN_PRINT("Plugin config before recursive call: " + plugin_config);
-			WARN_PRINT("Full path before recursive call: " + full_path);
 			plugins.append_array(_get_plugins(full_path));
 		}
 	}
@@ -198,35 +182,6 @@ Vector<String> EditorPluginSettings::_get_plugins(const String &p_dir) {
 	da->list_dir_end();
 	return plugins;
 }
-
-Vector<String> EditorPluginSettings::_get_builtin_plugins() {
-	DirAccessRef da = DirAccess::create(DirAccess::ACCESS_FILESYSTEM);
-	Vector<String> results;
-	String dir = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("addons");
-	Error err = da->change_dir(dir);
-	if (err != OK) {
-		return results;
-	}
-
-	da->list_dir_begin();
-	for (String path = da->get_next(); path != String(); path = da->get_next()) {
-		if (path[0] == '.' || !da->current_is_dir()) {
-			continue;
-		}
-
-		const String full_path = dir.plus_file(path);
-		const String plugin_config = full_path.plus_file("plugin.cfg");
-		WARN_PRINT("Plugin config in builtin plugins call: " + plugin_config);
-		WARN_PRINT("Full path in builtin plugins call: " + full_path);
-		if (FileAccess::exists(plugin_config)) {
-			results.push_back(plugin_config);
-		}
-	}
-
-	da->list_dir_end();
-	return results;
-}
-
 
 void EditorPluginSettings::_bind_methods() {
 	ClassDB::bind_method("update_plugins", &EditorPluginSettings::update_plugins);

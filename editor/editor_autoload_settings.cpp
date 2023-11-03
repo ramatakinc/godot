@@ -691,7 +691,7 @@ bool EditorAutoloadSettings::autoload_add(const String &p_name, const String &p_
 		return false;
 	}
 
-	if (!path.begins_with("res://") && !path.begins_with("/Applications/Godot.app/Contents/MacOS/")) {
+	if (!path.begins_with("res://")) {
 		EditorNode::get_singleton()->show_warning(TTR("Can't add autoload:") + "\n" + vformat(TTR("%s is an invalid path. Not in resource path (res://)."), path));
 		return false;
 	}
