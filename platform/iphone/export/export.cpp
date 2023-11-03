@@ -45,7 +45,7 @@
 #include "platform/iphone/logo.gen.h"
 #include "platform/iphone/plugin/godot_plugin_config.h"
 #include "string.h"
-
+#include "servers/ramatak/ad_server.h"
 #include <sys/stat.h>
 
 class EditorExportPlatformIOS : public EditorExportPlatform {
@@ -281,6 +281,39 @@ public:
 				}
 			}
 		}
+		
+		plugins_dir = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("ios/plugins");
+		if (DirAccess::exists(plugins_dir)) {
+			Vector<String> plugins_filenames = list_plugin_config_files(plugins_dir, true);
+
+			if (!plugins_filenames.empty()) {
+				Ref<ConfigFile> config_file = memnew(ConfigFile);
+				for (int i = 0; i < plugins_filenames.size(); i++) {
+					PluginConfigIOS config = load_plugin_config(config_file, plugins_dir.plus_file(plugins_filenames[i]));
+					if (config.valid_config) {
+						loaded_plugins.push_back(config);
+						print_error("Valid plugin config file " + plugins_filenames[i]);
+					} else {
+						print_error("Invalid plugin config file " + plugins_filenames[i]);
+					}
+				}
+			}
+		}
+		// Array plugin_keys = AdServer::get_singleton()->get_plugin_priority_order();
+		// for (int plugin_idx = 0; plugin_idx < plugin_keys.size(); ++plugin_idx) {
+		// 	Ref<ConfigFile> config_file;
+		// 	config_file.instance();
+		// 	String config_string = AdServer::get_singleton()->get_plugin_raw(plugin_keys[plugin_idx])->get_ios_plugin_config();
+		// 	Error err = config_file->parse(config_string);
+		// 	if (err == Error::OK) {
+		// 		PluginConfigIOS config = parse_plugin_config(config_file, OS::get_singleton()->get_executable_path().get_base_dir().plus_file("ios/plugins").plus_file(plugin_keys[plugin_idx]));
+		// 		if (config.valid_config) {
+		// 			loaded_plugins.push_back(config);
+		// 		} else {
+		// 			WARN_PRINT_ONCE(vformat("Invalid plugin config: %s", plugin_keys[plugin_idx]));
+		// 		}
+		// 	}
+		// }
 
 		return loaded_plugins;
 	}
@@ -300,7 +333,7 @@ public:
 	}
 
 	virtual bool ad_plugins_supported() const {
-		return false;
+		return true;
 	}
 };
 
