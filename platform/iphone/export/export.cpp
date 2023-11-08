@@ -45,7 +45,6 @@
 #include "platform/iphone/logo.gen.h"
 #include "platform/iphone/plugin/godot_plugin_config.h"
 #include "string.h"
-
 #include <sys/stat.h>
 
 class EditorExportPlatformIOS : public EditorExportPlatform {
@@ -281,7 +280,7 @@ public:
 				}
 			}
 		}
-
+		
 		return loaded_plugins;
 	}
 
@@ -300,7 +299,7 @@ public:
 	}
 
 	virtual bool ad_plugins_supported() const {
-		return false;
+		return true;
 	}
 };
 
@@ -1694,6 +1693,11 @@ Error EditorExportPlatformIOS::_export_ios_plugins(const Ref<EditorExportPreset>
 			result_linker_flags += flag;
 		}
 		result_linker_flags = result_linker_flags.replace("\"", "\\\"");
+		
+		if (result_linker_flags.find("-ObjC") == -1) {
+			result_linker_flags += " -ObjC";
+		}
+
 		p_config_data.linker_flags += result_linker_flags;
 	}
 
@@ -1970,6 +1974,20 @@ Error EditorExportPlatformIOS::export_project(const Ref<EditorExportPreset> &p_p
 				return lib_copy_err;
 			}
 		}
+	}
+
+	// Copy project builtin libs to the project
+	const String &builtin_lib_path = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("ios/plugins");
+	String dest_lib_file_path = dest_dir + "frameworks";
+	bool dir_exists = tmp_app_path->dir_exists(builtin_lib_path);
+	Error lib_copy_err = dir_exists ? tmp_app_path->copy_dir(builtin_lib_path, dest_lib_file_path) : tmp_app_path->copy(builtin_lib_path, dest_lib_file_path);
+	if (lib_copy_err != OK) {
+		ERR_PRINT("Can't copy '" + builtin_lib_path + "'.");
+		memdelete(tmp_app_path);
+		return lib_copy_err;
+	}
+	else {
+		config_data.linker_flags += " -Fframeworks";
 	}
 
 	String iconset_dir = dest_dir + binary_name + "/Images.xcassets/AppIcon.appiconset/";
