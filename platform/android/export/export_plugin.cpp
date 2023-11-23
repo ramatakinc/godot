@@ -2129,13 +2129,13 @@ bool EditorExportPlatformAndroid::can_export(const Ref<EditorExportPreset> &p_pr
 	String dk_user;
 	String dk_password;
 
-	String default_debug = EditorSettings::get_singleton()->get("key_manager/default_debug");
 	int debug_key = p_preset->get("keystore/debug_key");
+	String default_debug = EditorSettings::get_singleton()->get("key_manager/default_debug");
 	if (debug_key == KEY_FROM_MANAGER && !default_debug.empty()) {
 		Dictionary data = EditorSettings::get_singleton()->get("key_manager/keys").get(default_debug);
 		dk = data["path"];
 		dk_user = data["alias"];
-		dk_password = data["password"];
+		dk_password = data["pass_store"];
 	} else {
 		dk = p_preset->get("keystore/debug");
 		dk_user = p_preset->get("keystore/debug_user");
@@ -2184,13 +2184,13 @@ bool EditorExportPlatformAndroid::can_export(const Ref<EditorExportPreset> &p_pr
 	String rk_user;
 	String rk_password;
 
-	String default_release = EditorSettings::get_singleton()->get("key_manager/default_release");
 	int release_key = p_preset->get("keystore/release_key");
+	String default_release = EditorSettings::get_singleton()->get("key_manager/default_release");
 	if (release_key == KEY_FROM_MANAGER && !default_release.empty()) {
 		Dictionary data = EditorSettings::get_singleton()->get("key_manager/keys").get(default_release);
 		rk = data["path"];
 		rk_user = data["alias"];
-		rk_password = data["password"];
+		rk_password = data["pass_store"];
 	} else {
 		rk = p_preset->get("keystore/release");
 		rk_user = p_preset->get("keystore/release_user");
@@ -3111,14 +3111,26 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 
 		if (should_sign) {
 			if (p_debug) {
-				String debug_keystore = p_preset->get("keystore/debug");
-				String debug_password = p_preset->get("keystore/debug_password");
-				String debug_user = p_preset->get("keystore/debug_user");
+				int debug_key = p_preset->get("keystore/debug_key");
+				String default_debug = EditorSettings::get_singleton()->get("key_manager/default_debug");
+				String debug_keystore;
+				String debug_username;
+				String debug_password;
+				if (debug_key == KEY_FROM_MANAGER && !default_debug.empty()) {
+					Dictionary data = EditorSettings::get_singleton()->get("key_manager/keys").get(default_debug);
+					debug_keystore = data["path"];
+					debug_username = data["alias"];
+					debug_password = data["pass_store"];
+				} else {
+					debug_keystore = p_preset->get("keystore/debug");
+					debug_username = p_preset->get("keystore/debug_user");
+					debug_password = p_preset->get("keystore/debug_password");
+				}
 
 				if (debug_keystore.empty()) {
 					debug_keystore = EditorSettings::get_singleton()->get("export/android/debug_keystore");
 					debug_password = EditorSettings::get_singleton()->get("export/android/debug_keystore_pass");
-					debug_user = EditorSettings::get_singleton()->get("export/android/debug_keystore_user");
+					debug_username = EditorSettings::get_singleton()->get("export/android/debug_keystore_user");
 				}
 				if (debug_keystore.is_rel_path()) {
 					debug_keystore = OS::get_singleton()->get_resource_dir().plus_file(debug_keystore).simplify_path();
@@ -3129,13 +3141,26 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 				}
 
 				cmdline.push_back("-Pdebug_keystore_file=" + debug_keystore); // argument to specify the debug keystore file.
-				cmdline.push_back("-Pdebug_keystore_alias=" + debug_user); // argument to specify the debug keystore alias.
+				cmdline.push_back("-Pdebug_keystore_alias=" + debug_username); // argument to specify the debug keystore alias.
 				cmdline.push_back("-Pdebug_keystore_password=" + debug_password); // argument to specify the debug keystore password.
 			} else {
 				// Pass the release keystore info as well
-				String release_keystore = p_preset->get("keystore/release");
-				String release_username = p_preset->get("keystore/release_user");
-				String release_password = p_preset->get("keystore/release_password");
+				int release_key = p_preset->get("keystore/release_key");
+				String default_release = EditorSettings::get_singleton()->get("key_manager/default_release");
+				String release_keystore;
+				String release_username;
+				String release_password;
+				if (release_key == KEY_FROM_MANAGER && !default_release.empty()) {
+					Dictionary data = EditorSettings::get_singleton()->get("key_manager/keys").get(default_release);
+					release_keystore = data["path"];
+					release_username = data["alias"];
+					release_password = data["pass_store"];
+				} else {
+					release_keystore = p_preset->get("keystore/release");
+					release_username = p_preset->get("keystore/release_user");
+					release_password = p_preset->get("keystore/release_password");
+				}
+
 				if (release_keystore.is_rel_path()) {
 					release_keystore = OS::get_singleton()->get_resource_dir().plus_file(release_keystore).simplify_path();
 				}
