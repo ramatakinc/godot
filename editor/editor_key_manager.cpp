@@ -47,7 +47,7 @@ int EditorKeyManager::_run_keytool(const List<String> &p_arguments, String *r_ou
 	}
 
 	if (result != OK) {
-		EditorNode::get_singleton()->show_warning(TTR("Error calling keytool binary. Path in JAVA_HOME or RAMATAK_KEYTOOL_HOME environment variables either invalid or not set."));
+		EditorNode::get_singleton()->show_warning(TTR("Error calling keytool binary. Path in JAVA_HOME or KEYTOOL_HOME environment variables either invalid or not set."));
 	}
 
 	return result;
