@@ -2024,7 +2024,7 @@ String EditorExportPlatformAndroid::get_adb_path() {
 	if (OS::get_singleton()->get_name() == "Windows") {
 		exe_ext = ".exe";
 	}
-	String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_SDK_HOME");
+	String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_HOME");
 	return sdk_path.plus_file("platform-tools/adb" + exe_ext);
 }
 
@@ -2034,7 +2034,7 @@ String EditorExportPlatformAndroid::get_apksigner_path() {
 		exe_ext = ".bat";
 	}
 	String apksigner_command_name = "apksigner" + exe_ext;
-	String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_SDK_HOME");
+	String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_HOME");
 	String apksigner_path = "";
 
 	Error errn;
@@ -2207,7 +2207,7 @@ bool EditorExportPlatformAndroid::can_export(const Ref<EditorExportPreset> &p_pr
 		err += TTR("Release keystore incorrectly configured in the export preset.") + "\n";
 	}
 
-	String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_SDK_HOME");
+	String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_HOME");
 	if (sdk_path == "") {
 		err += TTR("A valid Android SDK path is required in Editor Settings.") + "\n";
 		valid = false;
@@ -2996,7 +2996,7 @@ Error EditorExportPlatformAndroid::export_project_helper(const Ref<EditorExportP
 			}
 		}
 		const String assets_directory = get_assets_directory(p_preset, export_format);
-		String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_SDK_HOME");
+		String sdk_path = OS::get_singleton()->get_environment("RAMATAK_ANDROID_HOME");
 		ERR_FAIL_COND_V_MSG(sdk_path.empty(), ERR_UNCONFIGURED, "Android SDK path must be configured in Editor Settings at 'export/android/android_sdk_path'.");
 		print_verbose("Android sdk path: " + sdk_path);
 
