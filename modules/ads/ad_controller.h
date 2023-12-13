@@ -23,18 +23,18 @@ protected:
 	void _notification(int p_what);
 
 public:
-	void set_ad_unit(String p_ad_unit);
-	String get_ad_unit() const;
+	virtual void set_ad_unit(String p_ad_unit);
+	virtual String get_ad_unit() const;
 
-	void show();
-	void hide();
+	virtual void show();
+	virtual void hide();
 
-	void _ad_loaded(Variant p_request_token);
-	void _ad_shown(Variant p_request_token);
-	void _ad_clicked(Variant p_request_token);
-	void _ad_closed(Variant p_request_token);
-	void _ad_reward_earned(Variant p_request_token);
-	void _ad_error(Variant p_request_token, Variant p_message);
+	virtual void _ad_loaded(Variant p_request_token);
+	virtual void _ad_shown(Variant p_request_token);
+	virtual void _ad_clicked(Variant p_request_token);
+	virtual void _ad_closed(Variant p_request_token);
+	virtual void _ad_reward_earned(Variant p_request_token);
+	virtual void _ad_error(Variant p_request_token, Variant p_message);
 
 	AdController();
 };

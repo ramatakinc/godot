@@ -44,8 +44,8 @@
 #include "main/splash.gen.h"
 #include "platform/iphone/logo.gen.h"
 #include "platform/iphone/plugin/godot_plugin_config.h"
+#include "servers/ramatak/ad_server.h"
 #include "string.h"
-
 #include <sys/stat.h>
 
 class EditorExportPlatformIOS : public EditorExportPlatform {
@@ -281,7 +281,7 @@ public:
 				}
 			}
 		}
-
+		
 		return loaded_plugins;
 	}
 
@@ -300,7 +300,7 @@ public:
 	}
 
 	virtual bool ad_plugins_supported() const {
-		return false;
+		return true;
 	}
 };
 
@@ -435,6 +435,8 @@ void EditorExportPlatformIOS::get_export_options(List<ExportOption> *r_options) 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "storyboard/custom_image@3x", PROPERTY_HINT_FILE, "*.png,*.jpg,*.jpeg"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "storyboard/use_custom_bg_color"), false));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::COLOR, "storyboard/custom_bg_color"), Color()));
+
+	r_options->push_back(ExportOption(PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_priorities"), Dictionary()));
 
 	for (uint64_t i = 0; i < sizeof(loading_screen_infos) / sizeof(loading_screen_infos[0]); ++i) {
 		r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, loading_screen_infos[i].preset_key, PROPERTY_HINT_FILE, "*.png,*.jpg,*.jpeg"), ""));
@@ -721,6 +723,221 @@ String EditorExportPlatformIOS::_get_additional_plist_content() {
 	for (int i = 0; i < export_plugins.size(); ++i) {
 		result += export_plugins[i]->get_ios_plist_content();
 	}
+
+	result += "<key>SKAdNetworkItems</key>";
+	result += "<array>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>cstr6suwn9.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>4fzdc2evr5.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>4pfyvq9l8r.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>2fnua5tdw4.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>ydx93a7ass.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>5a6flpkh64.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>p78axxw29g.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>v72qych5uu.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>ludvb6z3bs.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>cp8zw746q7.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>3sh42y64q3.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>c6k4g5qg8m.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>s39g8k73mm.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>3qy4746246.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>f38h382jlk.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>hs6bdukanm.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>v4nxqhlyqp.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>wzmmz9fp6w.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>yclnxrl5pm.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>t38b2kh725.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>7ug5zh24hu.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>gta9lk7p23.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>vutu7akeur.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>y5ghdn5j9k.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>n6fk4nfna4.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>v9wttpbfk9.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>n38lu8286q.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>47vhws6wlr.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>kbd757ywx3.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>9t245vhmpl.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>eh6m2bh4zr.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>a2p9lx4jpn.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>22mmun2rn5.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>4468km3ulz.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>2u9pt9hc89.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>8s468mfl3y.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>klf5c3l5u5.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>ppxm28t8ap.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>ecpz2srf59.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>uw77j35x4d.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>pwa73g5rt2.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>mlmmfzh3r3.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>578prtvx9j.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>4dzt52r2t5.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>e5fvkxwrpn.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>8c4e2ghe7u.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>zq492l623r.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>3rd42ekr43.skadnetwork</string>";
+	result += "</dict>";
+	result += "<dict>";
+	result += "<key>SKAdNetworkIdentifier</key>";
+	result += "<string>3qcr597p9d.skadnetwork</string>";
+	result += "</dict>";
+	result += "</array>";
+	result += "<key>GADApplicationIdentifier</key>";
+	Dictionary admob_config = AdServer::get_singleton()->get_plugin_config("ADMOB");
+	if (admob_config.has("application_id")) {
+		String admob_app_id = admob_config["application_id"];
+		result += "<string>" + admob_app_id + "</string>";
+	} else {
+		result += "<string></string>";
+		WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup.");
+	}
+
+	result += "<key>GADDelayAppMeasurementInit</key>";
+	result += "<false />";
+	result += "<key>NSUserTrackingUsageDescription</key>";
+	result += "<string>This ID will be used to deliver personalized ads.</string>";
+
 	return result;
 }
 
@@ -1694,6 +1911,11 @@ Error EditorExportPlatformIOS::_export_ios_plugins(const Ref<EditorExportPreset>
 			result_linker_flags += flag;
 		}
 		result_linker_flags = result_linker_flags.replace("\"", "\\\"");
+		
+		if (result_linker_flags.find("-ObjC") == -1) {
+			result_linker_flags += " -ObjC";
+		}
+
 		p_config_data.linker_flags += result_linker_flags;
 	}
 
@@ -1970,6 +2192,20 @@ Error EditorExportPlatformIOS::export_project(const Ref<EditorExportPreset> &p_p
 				return lib_copy_err;
 			}
 		}
+	}
+
+	// Copy project builtin libs to the project
+	const String &builtin_lib_path = OS::get_singleton()->get_executable_path().get_base_dir().plus_file("ios/frameworks");
+	String dest_lib_file_path = dest_dir + "frameworks";
+	bool dir_exists = tmp_app_path->dir_exists(builtin_lib_path);
+	Error lib_copy_err = dir_exists ? tmp_app_path->copy_dir(builtin_lib_path, dest_lib_file_path) : tmp_app_path->copy(builtin_lib_path, dest_lib_file_path);
+	if (lib_copy_err != OK) {
+		ERR_PRINT("Can't copy '" + builtin_lib_path + "'.");
+		memdelete(tmp_app_path);
+		return lib_copy_err;
+	}
+	else {
+		config_data.linker_flags += " -Fframeworks";
 	}
 
 	String iconset_dir = dest_dir + binary_name + "/Images.xcassets/AppIcon.appiconset/";

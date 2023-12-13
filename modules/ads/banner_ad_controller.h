@@ -22,7 +22,7 @@ public:
 	bool get_auto_show() const;
 	void set_auto_show(bool p_auto_show);
 
-	void show();
+	virtual void show();
 
 	AdServer::BannerAdLocation get_location() const;
 	void set_location(AdServer::BannerAdLocation p_location);
