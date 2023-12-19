@@ -90,9 +90,9 @@ PluginConfigAndroid PluginConfigAndroid::resolve_prebuilt_plugin(PluginConfigAnd
 	return resolved;
 }
 
-Vector<PluginConfigAndroid> PluginConfigAndroid::get_prebuilt_plugins(String plugins_base_dir) {
+Vector<PluginConfigAndroid> PluginConfigAndroid::get_prebuilt_plugins(String plugins_base_dir, const Ref<EditorExportPreset> &p_preset) {
 	Vector<PluginConfigAndroid> prebuilt_plugins;
-	Array plugin_keys = AdServer::get_singleton()->get_plugin_priority_order();
+	Array plugin_keys = p_preset->get("ramatak/monetization/ad_plugin_priorities");
 	for (int plugin_idx = 0; plugin_idx < plugin_keys.size(); plugin_idx++) {
 		Ref<ConfigFile> config;
 		config.instance();

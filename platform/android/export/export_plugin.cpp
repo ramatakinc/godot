@@ -638,7 +638,7 @@ Vector<PluginConfigAndroid> EditorExportPlatformAndroid::get_enabled_plugins(con
 
 	String plugins_dir = ProjectSettings::get_singleton()->get_resource_path().plus_file("android/plugins");
 	// Add the prebuilt plugins
-	enabled_plugins.append_array(PluginConfigAndroid::get_prebuilt_plugins(plugins_dir));
+	enabled_plugins.append_array(PluginConfigAndroid::get_prebuilt_plugins(plugins_dir, p_presets));
 
 	Vector<PluginConfigAndroid> all_plugins = get_plugins();
 	for (int i = 0; i < all_plugins.size(); i++) {
