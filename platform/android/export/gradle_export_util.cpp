@@ -260,7 +260,7 @@ String _get_activity_tag(const Ref<EditorExportPreset> &p_preset) {
 String _get_application_tag(const Ref<EditorExportPreset> &p_preset, bool p_has_read_write_storage_permission) {
 	int xr_mode_index = (int)(p_preset->get("xr_features/xr_mode"));
 	bool uses_xr = xr_mode_index == XR_MODE_OVR || xr_mode_index == XR_MODE_OPENXR;
-Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
+	Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
 	String maybe_add_cleartext_traffic_for_fb = "";
 	if (ad_priorities.has("META")) {
 		maybe_add_cleartext_traffic_for_fb = "        android:usesCleartextTraffic=\"true\"\n";
@@ -272,7 +272,7 @@ Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
 			"        android:isGame=\"%s\"\n"
 			"        android:hasFragileUserData=\"%s\"\n"
 			"        android:requestLegacyExternalStorage=\"%s\"\n"
-"%s"
+			"%s"
 			"        tools:replace=\"android:allowBackup,android:isGame,android:hasFragileUserData,android:requestLegacyExternalStorage\"\n"
 			"        tools:ignore=\"GoogleAppIndexingWarning\"\n"
 			"        android:icon=\"@mipmap/icon\" >\n\n"
@@ -304,12 +304,14 @@ Array ad_priorities = AdServer::get_singleton()->get_plugin_priority_order();
 	}
 
 	Dictionary admob_config = AdServer::get_singleton()->get_plugin_config("ADMOB");
-	if (ad_priorities.has("ADMOB") && admob_config.has("application_id")) {
+	if (admob_config.has("application_id")) {
 		// Update the meta-data 'android:name' attribute based on whether Admob is required.
 		String admob_app_id = admob_config["application_id"];
 		manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id + "\" />\n";
 	} else if (ad_priorities.has("ADMOB")) {
 		WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup.");
+	} else if (ad_priorities.has("XMEDIATOR")) {
+		WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup if Admob is enabled.");
 	}
 
 	manifest_application_text += _get_activity_tag(p_preset);
