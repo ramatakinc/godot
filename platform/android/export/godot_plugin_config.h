@@ -35,6 +35,7 @@
 #include "core/io/config_file.h"
 #include "core/project_settings.h"
 #include "core/ustring.h"
+#include "editor/editor_export.h"
 
 /*
  The `config` section and fields are required and defined as follow:
@@ -88,7 +89,7 @@ struct PluginConfigAndroid {
 
 	static PluginConfigAndroid resolve_prebuilt_plugin(PluginConfigAndroid prebuilt_plugin, String plugin_config_dir);
 
-	static Vector<PluginConfigAndroid> get_prebuilt_plugins(String plugins_base_dir);
+	static Vector<PluginConfigAndroid> get_prebuilt_plugins(String plugins_base_dir, const Ref<EditorExportPreset> &p_preset);
 
 	static bool is_plugin_config_valid(PluginConfigAndroid plugin_config);
 
