@@ -226,8 +226,8 @@ static const int EXPORT_FORMAT_AAB = 1;
 static const char *APK_ASSETS_DIRECTORY = "res://android/build/assets";
 static const char *AAB_ASSETS_DIRECTORY = "res://android/build/assetPacks/installTime/src/main/assets";
 
-static const int DEFAULT_MIN_SDK_VERSION = 19; // Should match the value in 'platform/android/java/app/config.gradle#minSdk'
-static const int DEFAULT_TARGET_SDK_VERSION = 32; // Should match the value in 'platform/android/java/app/config.gradle#targetSdk'
+static const int DEFAULT_MIN_SDK_VERSION = 24; // Should match the value in 'platform/android/java/app/config.gradle#minSdk'
+static const int DEFAULT_TARGET_SDK_VERSION = 33; // Should match the value in 'platform/android/java/app/config.gradle#targetSdk'
 
 static const int KEY_FROM_MANAGER = 0;
 static const int KEY_FROM_MANUAL = 1;
