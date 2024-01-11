@@ -24,6 +24,7 @@ public:
 	String get_ad_unit_network_id(StringName p_ad_unit, String p_network);
 
 	Array get_ad_units() const;
+	AdServer::AdType get_ad_type(StringName p_ad_unit) const;
 
 	MonetizationSettings();
 	virtual ~MonetizationSettings();

@@ -2,6 +2,7 @@
 #include "core/project_settings.h"
 
 MonetizationSettings *MonetizationSettings::singleton = nullptr;
+const static String ad_unit_setting = "ramatak/monetization/ad_units";
 
 MonetizationSettings::MonetizationSettings() {
 	singleton = this;
@@ -22,7 +23,6 @@ void MonetizationSettings::_bind_methods() {
 }
 
 void MonetizationSettings::delete_ad_unit(StringName p_ad_unit) {
-	String ad_unit_setting = "ramatak/monetization/ad_units";
 	ProjectSettings *project_settings = ProjectSettings::get_singleton();
 
 	Dictionary dict = project_settings->get(ad_unit_setting);
@@ -33,11 +33,21 @@ void MonetizationSettings::delete_ad_unit(StringName p_ad_unit) {
 }
 
 Array MonetizationSettings::get_ad_units() const {
-	return ad_units;
+	ProjectSettings *project_settings = ProjectSettings::get_singleton();
+
+	Dictionary dict = project_settings->get(ad_unit_setting);
+	return dict.keys();
+}
+
+AdServer::AdType MonetizationSettings::get_ad_type(StringName p_ad_unit) const {
+	ProjectSettings *project_settings = ProjectSettings::get_singleton();
+
+	Dictionary dict = project_settings->get(ad_unit_setting);
+	Dictionary ad_unit_ids = dict.get(p_ad_unit, Dictionary());
+	return (AdServer::AdType)(int)ad_unit_ids.get("ad_unit_type", AdServer::AD_TYPE_BANNER);
 }
 
 String MonetizationSettings::get_ad_unit_network_id(StringName p_ad_unit, String p_network) {
-	String ad_unit_setting = "ramatak/monetization/ad_units";
 	ProjectSettings *project_settings = ProjectSettings::get_singleton();
 
 	Dictionary dict = project_settings->get(ad_unit_setting);
@@ -46,7 +56,6 @@ String MonetizationSettings::get_ad_unit_network_id(StringName p_ad_unit, String
 }
 
 void MonetizationSettings::set_ad_unit_network_id(StringName p_ad_unit, String p_network, String p_id) {
-	String ad_unit_setting = "ramatak/monetization/ad_units";
 	ProjectSettings *project_settings = ProjectSettings::get_singleton();
 
 	Dictionary dict = project_settings->get(ad_unit_setting);
