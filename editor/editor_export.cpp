@@ -1011,9 +1011,12 @@ Error EditorExportPlatform::export_project_files(const Ref<EditorExportPreset> &
 		}
 	}
 
-	Array ramatak_ad_plugin_priorities = p_preset->get("ramatak/monetization/ad_plugin_priorities");
-	if (ramatak_ad_plugin_priorities.size() > 0) {
-		custom_map["ramatak/monetization/ad_plugin_priorities"] = ramatak_ad_plugin_priorities;
+	List<PropertyInfo> all_preset_properties = p_preset->get_properties();
+	for (List<PropertyInfo>::Element *E = all_preset_properties.front(); E; E = E->next()) {
+		PropertyInfo pi = E->get();
+		if (pi.name.begins_with("ramatak/")) {
+			custom_map[pi.name] = p_preset->get(pi.name);
+		}
 	}
 
 	String config_file = "project.binary";

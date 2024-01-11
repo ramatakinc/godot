@@ -59,6 +59,8 @@ class ProjectExportDialog : public ConfirmationDialog {
 	GDCLASS(ProjectExportDialog, ConfirmationDialog);
 
 private:
+	Container *ramatak_status_label_container;
+
 	TabContainer *sections;
 
 	MenuButton *add_preset;

@@ -303,6 +303,10 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 			break;
 		}
 	}
+	while (ramatak_status_label_container->get_child_count() > 0) {
+		ramatak_status_label_container->remove_child(ramatak_status_label_container->get_child(0));
+	}
+
 	if (current->get_platform()->ad_plugins_supported()) {
 		VBoxContainer *ramtak_vb = memnew(VBoxContainer);
 		ramtak_vb->set_name(TTR("Ramatak"));
@@ -310,6 +314,8 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 		ramatak_export_settings->set_preset(current);
 		ramtak_vb->add_child(ramatak_export_settings);
 		sections->add_child(ramtak_vb);
+
+		ramatak_status_label_container->add_child(ramatak_export_settings->get_status_label());
 	}
 
 	int script_export_mode = current->get_script_export_mode();
@@ -1032,9 +1038,15 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	// Preset settings.
 
+	ScrollContainer *preset_settings_scroll = memnew(ScrollContainer);
+	preset_settings_scroll->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	preset_settings_scroll->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	hbox->add_child(preset_settings_scroll);
+
 	VBoxContainer *settings_vb = memnew(VBoxContainer);
 	settings_vb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
-	hbox->add_child(settings_vb);
+	settings_vb->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	preset_settings_scroll->add_child(settings_vb);
 
 	name = memnew(LineEdit);
 	settings_vb->add_margin_child(TTR("Name:"), name);
@@ -1205,6 +1217,14 @@ ProjectExportDialog::ProjectExportDialog() {
 	export_pck_zip->set_mode(EditorFileDialog::MODE_SAVE_FILE);
 	add_child(export_pck_zip);
 	export_pck_zip->connect("file_selected", this, "_export_pck_zip_selected");
+
+	// Container for Ramatak status label.
+
+	ramatak_status_label_container = memnew(BoxContainer);
+	ramatak_status_label_container->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	settings_vb->add_child(ramatak_status_label_container);
+
+	// Errors and warnings.
 
 	export_error = memnew(Label);
 	main_vb->add_child(export_error);

@@ -1,4 +1,5 @@
 #include "ad_plugin.h"
+#include "core/project_settings.h"
 
 void AdPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("init_plugin"), &AdPlugin::init_plugin);
@@ -13,4 +14,12 @@ void AdPlugin::_bind_methods() {
 	BIND_ENUM_CONSTANT(AUTH_ERROR);
 	BIND_ENUM_CONSTANT(NETWORK_ERROR);
 	BIND_ENUM_CONSTANT(UNSPECIFIED_ERROR);
+}
+
+bool AdPlugin::_get_debug_mode() const {
+	return ProjectSettings::get_singleton()->get_setting(AD_DEBUG_MODE_KEY);
+}
+
+bool AdPlugin::_get_child_directed() const {
+	return ProjectSettings::get_singleton()->get_setting(AD_CHILD_DIRECTED_KEY);
 }

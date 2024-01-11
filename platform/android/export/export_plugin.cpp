@@ -1768,6 +1768,8 @@ void EditorExportPlatformAndroid::get_export_options(List<ExportOption> *r_optio
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, "apk_expansion/public_key", PROPERTY_HINT_MULTILINE_TEXT), ""));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_priorities"), Dictionary()));
+	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/debug_mode"), false));
+	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/child_directed"), false));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::POOL_STRING_ARRAY, "permissions/custom_permissions"), PoolStringArray()));
 
