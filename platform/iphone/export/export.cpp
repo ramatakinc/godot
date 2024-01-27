@@ -281,7 +281,7 @@ public:
 				}
 			}
 		}
-		
+
 		return loaded_plugins;
 	}
 
@@ -437,6 +437,8 @@ void EditorExportPlatformIOS::get_export_options(List<ExportOption> *r_options) 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::COLOR, "storyboard/custom_bg_color"), Color()));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_priorities"), Dictionary()));
+	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/debug_mode"), false));
+	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/child_directed"), false));
 
 	for (uint64_t i = 0; i < sizeof(loading_screen_infos) / sizeof(loading_screen_infos[0]); ++i) {
 		r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, loading_screen_infos[i].preset_key, PROPERTY_HINT_FILE, "*.png,*.jpg,*.jpeg"), ""));
@@ -1911,7 +1913,7 @@ Error EditorExportPlatformIOS::_export_ios_plugins(const Ref<EditorExportPreset>
 			result_linker_flags += flag;
 		}
 		result_linker_flags = result_linker_flags.replace("\"", "\\\"");
-		
+
 		if (result_linker_flags.find("-ObjC") == -1) {
 			result_linker_flags += " -ObjC";
 		}
@@ -2203,8 +2205,7 @@ Error EditorExportPlatformIOS::export_project(const Ref<EditorExportPreset> &p_p
 		ERR_PRINT("Can't copy '" + builtin_lib_path + "'.");
 		memdelete(tmp_app_path);
 		return lib_copy_err;
-	}
-	else {
+	} else {
 		config_data.linker_flags += " -Fframeworks";
 	}
 

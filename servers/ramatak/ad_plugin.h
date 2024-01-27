@@ -6,11 +6,19 @@
 #include "core/reference.h"
 #include "servers/ramatak/ad_server.h"
 
+// If you add settings here you must also add them to the preset settings in EditorExportPlatformIOS::get_export_options and  EditorExportPlatformAndroid::get_export_options
+#define AD_PLUGIN_PRIORITIES_KEY "ramatak/monetization/ad_plugin_priorities"
+#define AD_DEBUG_MODE_KEY "ramatak/monetization/debug_mode"
+#define AD_CHILD_DIRECTED_KEY "ramatak/monetization/child_directed"
+
 class AdPlugin : public Reference {
 	GDCLASS(AdPlugin, Reference);
 
 protected:
 	static void _bind_methods();
+
+	bool _get_debug_mode() const;
+	bool _get_child_directed() const;
 
 public:
 	enum AdPluginResult {

@@ -304,14 +304,18 @@ String _get_application_tag(const Ref<EditorExportPreset> &p_preset, bool p_has_
 	}
 
 	Dictionary admob_config = AdServer::get_singleton()->get_plugin_config("ADMOB");
-	if (admob_config.has("application_id")) {
+	Dictionary xmediator_config = AdServer::get_singleton()->get_plugin_config("XMEDIATOR");
+	if (admob_config.has("application_id") && ((String)admob_config["application_id"]) != "") {
 		// Update the meta-data 'android:name' attribute based on whether Admob is required.
 		String admob_app_id = admob_config["application_id"];
-		manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id + "\" />\n";
+		manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id.strip_edges() + "\" />\n";
 	} else if (ad_priorities.has("ADMOB")) {
 		WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup.");
-	} else if (ad_priorities.has("XMEDIATOR")) {
-		WARN_PRINT("Missing Admob application_id config setting. Exported game may crash on startup if Admob is enabled.");
+	}
+	if (xmediator_config.has("android_google_ads_application_id") && ((String)xmediator_config["android_google_ads_application_id"]) != "") {
+		// Update the meta-data 'android:name' attribute based on whether Admob is required.
+		String admob_app_id = xmediator_config["android_google_ads_application_id"];
+		manifest_application_text += "        <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"" + admob_app_id.strip_edges() + "\" />\n";
 	}
 
 	manifest_application_text += _get_activity_tag(p_preset);
