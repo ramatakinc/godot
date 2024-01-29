@@ -3,8 +3,8 @@
 #include "servers/ramatak/ad_server.h"
 
 void AdController::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_ad_unit", "ad_unit"), &AdController::set_ad_unit);
-	ClassDB::bind_method(D_METHOD("get_ad_unit"), &AdController::get_ad_unit);
+	ClassDB::bind_method(D_METHOD("set_ad_placement", "ad_placement"), &AdController::set_ad_placement);
+	ClassDB::bind_method(D_METHOD("get_ad_placement"), &AdController::get_ad_placement);
 
 	ClassDB::bind_method(D_METHOD("show"), &AdController::show);
 	ClassDB::bind_method(D_METHOD("hide"), &AdController::hide);
@@ -16,7 +16,7 @@ void AdController::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_ad_reward_earned", "request_token"), &AdController::_ad_reward_earned);
 	ClassDB::bind_method(D_METHOD("_ad_error", "request_token", "message"), &AdController::_ad_error);
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "ad_unit", PropertyHint::PROPERTY_HINT_AD_UNIT), "set_ad_unit", "get_ad_unit");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "ad_placement", PropertyHint::PROPERTY_HINT_AD_UNIT), "set_ad_placement", "get_ad_placement");
 
 	ADD_SIGNAL(MethodInfo("ad_loaded"));
 	ADD_SIGNAL(MethodInfo("ad_shown"));
@@ -31,26 +31,25 @@ void AdController::_notification(int p_what) {
 	}
 }
 
-void AdController::set_ad_unit(String p_ad_unit) {
-	ad_unit = p_ad_unit;
+void AdController::set_ad_placement(String p_ad_placement) {
+	ad_placement = p_ad_placement;
 }
 
-String AdController::get_ad_unit() const {
-	return ad_unit;
+String AdController::get_ad_placement() const {
+	return ad_placement;
 }
 
 void AdController::show() {
-	if (ad_unit == "") {
-		WARN_PRINT("Attempting to show advertisement, but no ad unit selected.");
+	if (ad_placement == "") {
+		WARN_PRINT("Attempting to show advertisement, but no ad placement selected.");
 		return;
 	}
-	request_tokens.append(AdServer::get_singleton()->show_other(ad_unit));
+	request_tokens.append(AdServer::get_singleton()->show_other(ad_placement));
 }
 
 void AdController::hide() {
-	AdServer::get_singleton()->hide(ad_unit);
+	AdServer::get_singleton()->hide(ad_placement);
 }
-
 
 void AdController::_ad_loaded(Variant p_request_token) {
 	if (request_tokens.has(p_request_token)) {

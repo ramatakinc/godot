@@ -2161,7 +2161,7 @@ ProjectSettingsEditor::ProjectSettingsEditor(EditorData *p_data) {
 	tab_container->add_child(import_defaults_editor);
 
 	ramatak_settings_editor = memnew(RamatakSettingsEditor);
-	ramatak_settings_editor->set_name(TTR("Ramatak"));
+	ramatak_settings_editor->set_name(TTR("Monetization"));
 	tab_container->add_child(ramatak_settings_editor);
 
 	timer = memnew(Timer);

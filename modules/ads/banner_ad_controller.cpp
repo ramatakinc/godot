@@ -32,11 +32,11 @@ void BannerAdController::set_auto_show(bool p_auto_show) {
 }
 
 void BannerAdController::show() {
-	if (ad_unit == "") {
-		WARN_PRINT("Attempting to show banner advertisement, but no ad unit selected.");
+	if (ad_placement == "") {
+		WARN_PRINT("Attempting to show banner advertisement, but no ad placement selected.");
 		return;
 	}
-	request_tokens.append(AdServer::get_singleton()->show_banner(ad_unit, size, location));
+	request_tokens.append(AdServer::get_singleton()->show_banner(ad_placement, size, location));
 }
 
 AdServer::BannerAdSize BannerAdController::get_size() const {

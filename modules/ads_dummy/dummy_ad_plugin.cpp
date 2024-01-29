@@ -53,7 +53,7 @@ Array DummyAdPlugin::get_shown_ad_units() {
 	return ad_units;
 }
 
-Array DummyAdPlugin::get_config_key_tooltip_pairs() {
+Array DummyAdPlugin::get_config_key_tooltip_name_triples() {
 	Array keys;
 	return keys;
 }
