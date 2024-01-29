@@ -31,7 +31,7 @@ public:
 
 	virtual AdPluginResult init_plugin() = 0;
 
-	virtual Array get_config_key_tooltip_pairs() = 0;
+	virtual Array get_config_key_tooltip_name_triples() = 0;
 	virtual String get_friendly_name() = 0;
 
 	virtual AdPluginResult show_other(String p_ad_unit, Variant p_request_token, AdServer::AdType p_ad_type) = 0;

@@ -13,7 +13,7 @@ class DummyAdPlugin : public AdPlugin {
 public:
 	virtual AdPluginResult init_plugin();
 
-	virtual Array get_config_key_tooltip_pairs();
+	virtual Array get_config_key_tooltip_name_triples();
 	virtual String get_friendly_name();
 
 	virtual AdPluginResult show_banner(String p_ad_unit, Variant p_request_token, String p_size, String p_location);

@@ -39,7 +39,7 @@ void RamatakSettingsAdUnitEditor::set_ad_unit(const String &p_ad_unit) {
 	// Set up the option button to select ad unit type.
 	{
 		Label *ad_unit_type_label = memnew(Label);
-		ad_unit_type_label->set_text("Ad Unit Type:");
+		ad_unit_type_label->set_text("Ad Placement Type:");
 		grid_container->add_child(ad_unit_type_label);
 
 		ad_unit_type_option_button = memnew(OptionButton);
@@ -73,7 +73,7 @@ void RamatakSettingsAdUnitEditor::set_ad_unit(const String &p_ad_unit) {
 		plugins.push_back(all_plugins[i]);
 
 		Label *label = memnew(Label);
-		label->set_text(vformat(TTR("%s Ad Unit ID:"), plugins[i]));
+		label->set_text(vformat(TTR("%s Ad Placement ID:"), plugins[i]));
 		label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		grid_container->add_child(label);
 		labels.push_back(label);
@@ -265,7 +265,7 @@ RamatakSettingsAdUnitSetEditor::RamatakSettingsAdUnitSetEditor() {
 
 	add_hbox = memnew(HBoxContainer);
 	add_label = memnew(Label);
-	add_label->set_text(TTR("Advertisement Unit:"));
+	add_label->set_text(TTR("Advertisement Placement:"));
 	add_hbox->add_child(add_label);
 
 	add_edit = memnew(LineEdit);
@@ -320,18 +320,19 @@ void RamatakAdPluginSettingsEditor::set_plugin(const String &p_plugin) {
 	plugin_id = p_plugin;
 
 	Ref<AdPlugin> plugin = AdServer::get_singleton()->get_plugin_raw(plugin_id);
-	Array key_tooltip_pairs = plugin->get_config_key_tooltip_pairs();
+	Array setting_triples = plugin->get_config_key_tooltip_name_triples();
 	Dictionary ad_plugin_configs = ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_config");
 	Dictionary this_plugin_config = ad_plugin_configs[plugin_id];
-	for (int i = 0; i < key_tooltip_pairs.size(); i++) {
-		Array pair = key_tooltip_pairs[i];
-		String key = pair[0];
+	for (int i = 0; i < setting_triples.size(); i++) {
+		Array triple = setting_triples[i];
+		String key = triple[0];
 		plugin_keys.push_back(key);
 
 		// TODO: Tooltips.
 
+		String name = triple[2];
 		Label *label = memnew(Label);
-		label->set_text(key);
+		label->set_text(name);
 		label->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 		grid_container->add_child(label);
 		labels.push_back(label);
@@ -353,10 +354,10 @@ void RamatakAdPluginSettingsEditor::_setting_edited(Variant p_arg) {
 	Dictionary this_plugin_config = ad_plugin_configs[plugin_id];
 
 	Ref<AdPlugin> plugin = AdServer::get_singleton()->get_plugin_raw(plugin_id);
-	Array key_tooltip_pairs = plugin->get_config_key_tooltip_pairs();
-	for (int i = 0; i < key_tooltip_pairs.size(); i++) {
-		Array pair = key_tooltip_pairs[i];
-		String key = pair[0];
+	Array setting_triples = plugin->get_config_key_tooltip_name_triples();
+	for (int i = 0; i < setting_triples.size(); i++) {
+		Array triple = setting_triples[i];
+		String key = triple[0];
 
 		this_plugin_config[key] = edits[i]->get_text();
 	}
@@ -422,7 +423,7 @@ RamatakSettingsEditor::RamatakSettingsEditor() {
 	edit_items_list = memnew(ItemList);
 	edit_items_list->set_custom_minimum_size(Size2(200, 0));
 
-	edit_items_list->add_item("Ad Units");
+	edit_items_list->add_item("Ad Placements");
 	edit_items_list->set_item_metadata(edit_items_list->get_item_count() - 1, (Variant)AD_UNITS);
 
 	edit_items_list->connect("item_selected", this, "_edit_items_list_item_selected");
@@ -462,8 +463,8 @@ void RamatakSettingsEditor::_notification(int p_what) {
 		plugins = AdServer::get_singleton()->get_available_plugins();
 		for (int i = 0; i < plugins.size(); i++) {
 			Ref<AdPlugin> plugin = AdServer::get_singleton()->get_plugin_raw(plugins[i]);
-			Array key_tooltip_pairs = plugin->get_config_key_tooltip_pairs();
-			if (key_tooltip_pairs.empty()) {
+			Array setting_triples = plugin->get_config_key_tooltip_name_triples();
+			if (setting_triples.empty()) {
 				continue;
 			}
 			edit_items_list->add_item(vformat("%s options", plugin->get_friendly_name()));

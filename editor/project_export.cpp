@@ -298,7 +298,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 	minimum_size_changed();
 
 	for (int i = 0; i < sections->get_tab_count(); i++) {
-		if (sections->get_tab_title(i) == "Ramatak") {
+		if (sections->get_tab_title(i) == "Monetization") {
 			sections->remove_child(sections->get_tab_control(i));
 			break;
 		}
@@ -309,7 +309,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 
 	if (current->get_platform()->ad_plugins_supported()) {
 		VBoxContainer *ramtak_vb = memnew(VBoxContainer);
-		ramtak_vb->set_name(TTR("Ramatak"));
+		ramtak_vb->set_name(TTR("Monetization"));
 		RamatakExportSettingsEditor *ramatak_export_settings = memnew(RamatakExportSettingsEditor);
 		ramatak_export_settings->set_preset(current);
 		ramtak_vb->add_child(ramatak_export_settings);
