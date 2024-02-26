@@ -437,7 +437,7 @@ void EditorExportPlatformIOS::get_export_options(List<ExportOption> *r_options) 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::COLOR, "storyboard/custom_bg_color"), Color()));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::DICTIONARY, "ramatak/monetization/ad_plugin_priorities"), Dictionary()));
-	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/debug_mode"), false));
+	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/debug_mode"), true));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "ramatak/monetization/child_directed"), false));
 
 	for (uint64_t i = 0; i < sizeof(loading_screen_infos) / sizeof(loading_screen_infos[0]); ++i) {

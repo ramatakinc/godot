@@ -390,7 +390,23 @@ void RamatakAdPluginSettingsEditor::clear() {
 
 RamatakSettingsEditor::RamatakSettingsEditor() {
 	if (!ProjectSettings::get_singleton()->has_setting("ramatak/monetization/ad_units")) {
-		ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", Dictionary());
+		Dictionary ad_units;
+		{
+			Dictionary ad_unit = Dictionary();
+			ad_unit["ad_unit_type"] = AdServer::AD_TYPE_BANNER;
+			ad_units["default_banner"] = ad_unit;
+		}
+		{
+			Dictionary ad_unit = Dictionary();
+			ad_unit["ad_unit_type"] = AdServer::AD_TYPE_INTERSTITIAL;
+			ad_units["default_interstitial"] = ad_unit;
+		}
+		{
+			Dictionary ad_unit = Dictionary();
+			ad_unit["ad_unit_type"] = AdServer::AD_TYPE_REWARDED;
+			ad_units["default_rewarded"] = ad_unit;
+		}
+		ProjectSettings::get_singleton()->set("ramatak/monetization/ad_units", ad_units);
 	}
 	ProjectSettings::get_singleton()->set_initial_value("ramatak/monetization/ad_units", Dictionary());
 
