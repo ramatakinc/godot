@@ -99,7 +99,7 @@ Variant AdServer::show_other(String p_ad_unit) {
 
 	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
-		if (network_specific_id.length() > 0) {
+		if (network_specific_id.length() > 0 || project_settings->get("ramatak/monetization/debug_mode")) {
 			// Plugin `i` can handle the specified ad_unit.
 			Variant request_token = rand.rand() & 0x7FFFFFFF;
 			ad_plugins[ad_plugin_priorities[i]]->show_other(network_specific_id, request_token, (AdServer::AdType)ad_type);
@@ -131,10 +131,11 @@ Variant AdServer::show_banner(String p_ad_unit, BannerAdSize p_size, BannerAdLoc
 	} else {
 		ERR_FAIL_V_MSG(Variant(), "Ad location not handled");
 	}
-	Array ad_plugin_priorities = (Array)ProjectSettings::get_singleton()->get("ramatak/monetization/ad_plugin_priorities");
+	ProjectSettings *project_settings = ProjectSettings::get_singleton();
+	Array ad_plugin_priorities = (Array)project_settings->get("ramatak/monetization/ad_plugin_priorities");
 	for (int i = 0; i < ad_plugin_priorities.size(); i++) {
 		String network_specific_id = MonetizationSettings::get_singleton()->get_ad_unit_network_id(p_ad_unit, ad_plugin_priorities[i]);
-		if (network_specific_id.length() > 0) {
+		if (network_specific_id.length() > 0 || project_settings->get("ramatak/monetization/debug_mode")) {
 			// Plugin `i` can handle the specified ad_unit.
 			Variant request_token = rand.rand() & 0x7FFFFFFF;
 			ad_plugins[ad_plugin_priorities[i]]->show_banner(network_specific_id, request_token, size, location);
